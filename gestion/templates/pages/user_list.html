@@ -18,6 +18,7 @@
         </tr>
         {% endfor %}
     </table>
+    <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
 {% else %}
     <p>No hay usuarios registrados.</p>
 {% endif %}
