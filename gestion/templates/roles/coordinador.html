@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Panel del Coordinador</h2>
+<ul>
+    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+    <li><a href="{% url 'crear_ticket' %}">Crear Ticket</a></li>
+    <li><a href="{% url 'lista_usuarios' %}">Gestionar Usuarios</a></li>
+    <li><a href="{% url 'generar_reportes' %}">Generar Reportes</a></li>
+    <li><a href="{% url 'historial' %}">Historial</a></li>
+    <li><a href="{% url 'filtrar_actividades' %}">Filtrar Actividades</a></li>
+</ul>
+{% endblock %}

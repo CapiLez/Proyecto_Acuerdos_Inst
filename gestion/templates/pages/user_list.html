@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Lista de Usuarios</h2>
+
+{% if usuarios %}
+    <table border="1" cellspacing="0" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+        </tr>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.get_rol_display }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No hay usuarios registrados.</p>
+{% endif %}
+
+{% endblock %}

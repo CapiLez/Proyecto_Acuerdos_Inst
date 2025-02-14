@@ -55,7 +55,7 @@ ROOT_URLCONF = 'acuerdos_inst.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,6 +68,8 @@ TEMPLATES = [
     },
 ]
 
+STATIC_URL = '/static/'
+
 WSGI_APPLICATION = 'acuerdos_inst.wsgi.application'
 
 
@@ -77,7 +79,7 @@ WSGI_APPLICATION = 'acuerdos_inst.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql', 
-        'NAME': 'PROYECTO',      
+        'NAME': 'acuerdos_inst',      
         'USER': 'postgres',               
         'PASSWORD': 'capilez2003',            
         'HOST': 'localhost',                        
@@ -126,3 +128,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Asegura que Django redirige a tu login personalizado si alguien no está autenticado
+LOGIN_URL = "login"
+
+# Si quieres cambiar la URL a donde Django redirige después de iniciar sesión
+LOGIN_REDIRECT_URL = "dashboard"
+
+AUTH_USER_MODEL = "gestion.Usuario"
+

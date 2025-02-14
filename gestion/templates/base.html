@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Acuerdos Institucionales{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: center;
+            width: 50%;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            background: #007BFF;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        li:hover {
+            background: #0056b3;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .logout {
+            background: #DC3545;
+        }
+        .logout:hover {
+            background: #A71D2A;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido al Sistema de Gestión de Acuerdos Institucionales</h1>
+        <h2>{% block role %}{% endblock %}</h2>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        <ul>
+            <li class="logout"><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+        </ul>
+    </div>
+</body>
+</html>
+

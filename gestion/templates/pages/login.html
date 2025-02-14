@@ -1,0 +1,126 @@
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+        <h1>Bienvenido al Sistema de Gestión de Acuerdos Institucionales</h1>
+        <img src="/static/images/dif_tabasco_logo.png" alt="DIF Tabasco" class="dif-logo">
+        <h2>Iniciar Sesión</h2>
+
+        {% if messages %}
+            <div class="error-messages">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" onsubmit="return validarFormulario()">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                <label>Usuario:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label>Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function validarFormulario() {
+    let usuario = document.getElementById("username").value.trim();
+    let password = document.getElementById("password").value.trim();
+    
+    if (usuario === "" || password === "") {
+        alert("Debe ingresar un usuario y contraseña.");
+        return false;
+    }
+    return true;
+}
+</script>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column;
+    }
+    
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+        flex-direction: column;
+    }
+
+    .login-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        text-align: center;
+    }
+
+    .dif-logo {
+        max-width: 200px;
+        margin: 20px 0;
+    }
+
+    .error-messages {
+        color: red;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .input-group {
+        text-align: left;
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background: #007BFF;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+</style>
+
+{% endblock %}
+
+
+

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Crear Nuevo Ticket</h2>
+
+{% if messages %}
+    <div style="color: green; font-weight: bold;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="POST" onsubmit="return validarFormulario()">
+    {% csrf_token %}
+    
+    <label>Título:</label>
+    <input type="text" id="titulo" name="titulo" required>
+    
+    <label>Descripción:</label>
+    <textarea id="descripcion" name="descripcion" required></textarea>
+    
+    <button type="submit">Crear Ticket</button>
+</form>
+
+<script>
+function validarFormulario() {
+    let titulo = document.getElementById("titulo").value.trim();
+    let descripcion = document.getElementById("descripcion").value.trim();
+    
+    if (titulo === "" || descripcion === "") {
+        alert("Debe ingresar un título y una descripción.");
+        return false;
+    }
+    return true;
+}
+</script>
+
+{% endblock %}
