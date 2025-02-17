@@ -1,6 +1,14 @@
 {% block content %}
 <div class="ticket-container">
     <h2>Crear Nuevo Ticket</h2>
+    
+    {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <p class="message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -72,6 +80,18 @@
         width: 50%;
         margin: auto;
         text-align: center;
+    }
+    .message-container {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    .message {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
     }
     .input-group {
         text-align: left;

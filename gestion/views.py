@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Usuario, Ticket
+from collections import defaultdict
 
 
 def login_view(request):
@@ -14,60 +16,58 @@ def login_view(request):
             messages.error(request, "Debe ingresar usuario y contraseña.")
             return render(request, "pages/login.html")
 
-        print(f"Intentando autenticar usuario: {username}")  # Debug en la terminal
         user = authenticate(request, username=username, password=password)
 
         if user:
-            print(f"Usuario autenticado correctamente: {user}")  # Debug en la terminal
             login(request, user)
             return redirect("dashboard")  # Redirige al dashboard según el rol
         else:
-            print("Error: Usuario o contraseña incorrectos")  # Debug en la terminal
-            messages.error(request, "Usuario o contraseña incorrectos")
+            messages.error(request, "Credenciales incorrectas.")
+            return render(request, "pages/login.html")
 
     return render(request, "pages/login.html")
 
+@login_required
+def dashboard_view(request):
+    if request.user.rol == "director":
+        return render(request, "roles/director.html")
+    elif request.user.rol == "subdirector":
+        return render(request, "roles/subdirector.html")
+    elif request.user.rol == "jefe_departamento":
+        return render(request, "roles/jefe_departamento.html")
+    elif request.user.rol == "coordinador":
+        return render(request, "roles/coordinador.html")
+    else:
+        return render(request, "roles/usuario.html")
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect("login")
 
 
 @login_required
-def dashboard_view(request):
-    user_role = request.user.rol
-    if user_role == "coordinador":
-        return render(request, "roles/coordinador.html")
-    elif user_role == "director":
-        return render(request, "roles/director.html")
-    elif user_role == "subdirector":
-        return render(request, "roles/subdirector.html")
-    elif user_role == "jefe_departamento":
-        return render(request, "roles/jefe_departamento.html")
-    else:
-        return render(request, "roles/usuario.html")
-
-
-@login_required
 def crear_ticket_view(request):
     if request.method == "POST":
-        titulo = request.POST.get("titulo", "").strip()
-        descripcion = request.POST.get("descripcion", "").strip()
-
-        if not titulo or not descripcion:
-            messages.error(request, "Debe ingresar título y descripción del ticket.")
-            return render(request, "pages/create_ticket.html")
-
-        ticket = Ticket(
+        titulo = request.POST.get("titulo")
+        descripcion = request.POST.get("descripcion")
+        asignado_a_id = request.POST.get("asignado_a")
+        estado = request.POST.get("estado")
+        usuario_asignado = Usuario.objects.get(id=asignado_a_id)
+        usuario_creador = request.user
+        
+        Ticket.objects.create(
             titulo=titulo,
             descripcion=descripcion,
-            usuario_creador=request.user
+            usuario_asignado=usuario_asignado,
+            usuario_creador=usuario_creador,
+            estado=estado
         )
-        ticket.save()
         messages.success(request, "Ticket creado exitosamente.")
-        return redirect("dashboard")
+        return render(request, "pages/create_ticket.html", {"usuarios": Usuario.objects.all()})
 
-    return render(request, "pages/create_ticket.html")
+    usuarios = Usuario.objects.all()
+    return render(request, "pages/create_ticket.html", {"usuarios": usuarios})
 
 
 @login_required
@@ -77,7 +77,19 @@ def lista_usuarios_view(request):
 
 @login_required
 def generar_reportes_view(request):
-    return render(request, "pages/generar_reportes.html")
+    reportes = {}
+    search_query = request.GET.get("search", "").strip()
+    
+    if search_query:
+        usuarios = Usuario.objects.filter(Q(username__icontains=search_query))
+    else:
+        usuarios = Usuario.objects.all()
+    
+    for usuario in usuarios:
+        tickets = Ticket.objects.filter(usuario_asignado=usuario)
+        reportes[usuario.username] = list(tickets)
+    
+    return render(request, "pages/gen_reporte.html", {"reportes": reportes, "search_query": search_query})
 
 @login_required
 def historial_view(request):

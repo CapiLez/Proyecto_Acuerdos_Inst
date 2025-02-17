@@ -49,14 +49,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido al Sistema de Gestión de Acuerdos Institucionales</h1>
+        <h1>Sistema de Gestión de Acuerdos Institucionales</h1>
         <h2>{% block role %}{% endblock %}</h2>
         <main>
             {% block content %}{% endblock %}
         </main>
-        <ul>
-            <li class="logout"><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
-        </ul>
     </div>
 </body>
 </html>
