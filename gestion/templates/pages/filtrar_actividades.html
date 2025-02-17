@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="text-align: center;">Filtrar Actividades</h2>
+
+<div style="text-align: center; margin-bottom: 20px;">
+    <form method="GET" action="">
+        <label>Usuario Asignado:</label>
+        <select name="usuario_asignado">
+            <option value="">Todos</option>
+            {% for usuario in usuarios %}
+                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+            {% endfor %}
+        </select>
+        
+        <label>Usuario Creador:</label>
+        <select name="usuario_creador">
+            <option value="">Todos</option>
+            {% for usuario in usuarios %}
+                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+            {% endfor %}
+        </select>
+        
+        <label>Estado:</label>
+        <select name="estado">
+            <option value="">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_proceso">En Proceso</option>
+            <option value="resuelto">Terminado</option>
+        </select>
+        
+        <label>Prioridad:</label>
+        <select name="prioridad">
+            <option value="">Todas</option>
+            <option value="baja">Baja</option>
+            <option value="media">Media</option>
+            <option value="alta">Alta</option>
+        </select>
+        
+        <label>Fecha de Creación:</label>
+        <input type="date" name="fecha_inicio"> a <input type="date" name="fecha_fin">
+        
+        <button type="submit">Filtrar</button>
+        <a href="{% url 'filtrar_actividades' %}" style="padding: 5px 10px; background: #FF0000; color: white; text-decoration: none; border-radius: 5px;">Limpiar Filtros</a>
+    </form>
+</div>
+
+{% if tickets %}
+    <div style="display: flex; justify-content: center;">
+        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 60%;">
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Usuario Asignado</th>
+                <th>Usuario Creador</th>
+                <th>Fecha Creación</th>
+            </tr>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.id }}</td>
+                <td>{{ ticket.titulo }}</td>
+                <td>{{ ticket.estado }}</td>
+                <td>{{ ticket.prioridad }}</td>
+                <td>{{ ticket.usuario_asignado.username }}</td>
+                <td>{{ ticket.usuario_creador.username }}</td>
+                <td>{{ ticket.fecha_creacion }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% else %}
+    <p style="text-align: center;">No hay actividades que coincidan con los filtros seleccionados.</p>
+{% endif %}
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
+</div>
+
+{% endblock %}
