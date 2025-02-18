@@ -1,60 +1,25 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>{% block title %}Acuerdos Institucionales{% endblock %}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            text-align: center;
-            width: 50%;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            padding: 10px;
-            background: #007BFF;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-        li a {
-            color: white;
-            text-decoration: none;
-            display: block;
-        }
-        li:hover {
-            background: #0056b3;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        .logout {
-            background: #DC3545;
-        }
-        .logout:hover {
-            background: #A71D2A;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Actividades</title>
+    
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
 </head>
 <body>
-    <div class="container">
-        <h1>Sistema de Gestión de Acuerdos Institucionales</h1>
-        <h2>{% block role %}{% endblock %}</h2>
-        <main>
-            {% block content %}{% endblock %}
-        </main>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        
+    </nav>
+    
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
     </div>
+    
+    <footer class="footer bg-dark text-white text-center py-3 mt-4">
+        &copy; 2025 Gestión de Actividades - Todos los derechos reservados
+    </footer>
 </body>
 </html>
-

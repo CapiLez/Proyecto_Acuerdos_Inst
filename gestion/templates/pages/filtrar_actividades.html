@@ -41,7 +41,6 @@
         <input type="date" name="fecha_inicio"> a <input type="date" name="fecha_fin">
         
         <button type="submit">Filtrar</button>
-        <a href="{% url 'filtrar_actividades' %}" style="padding: 5px 10px; background: #FF0000; color: white; text-decoration: none; border-radius: 5px;">Limpiar Filtros</a>
     </form>
 </div>
 
@@ -73,6 +72,10 @@
 {% else %}
     <p style="text-align: center;">No hay actividades que coincidan con los filtros seleccionados.</p>
 {% endif %}
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="{% url 'filtrar_actividades' %}" style="padding: 10px 15px; background: #FF0000; color: white; text-decoration: none; border-radius: 5px;">Borrar Filtros</a>
+</div>
 
 <div style="text-align: center; margin-top: 20px;">
     <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>

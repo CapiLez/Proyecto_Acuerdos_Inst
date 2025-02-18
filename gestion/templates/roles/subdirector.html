@@ -1,9 +1,16 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-<h2>Panel del Subdirector</h2>
-<ul>
-    <li><a href="{% url 'crear_ticket' %}">Crear Ticket</a></li>
-    <li><a href="{% url 'filtrar_actividades' %}">Filtrar Actividades</a></li>
-    <li class="logout"><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
-</ul>
+<div class="container mt-4">
+    <h2 class="text-center">Panel del Subdirector</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item"><a href="{% url 'gestionar_usuarios' %}"><i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                <li class="list-group-item"><a href="{% url 'generar_reportes' %}"><i class="fas fa-file-alt"></i> Generar Reportes</a></li>
+                <li class="list-group-item"><a href="{% url 'aprobar_tickets' %}"><i class="fas fa-check-circle"></i> Aprobar Tickets</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}
