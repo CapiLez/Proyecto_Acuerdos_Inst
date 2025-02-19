@@ -39,36 +39,4 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var ctx = document.getElementById('ticketsChart').getContext('2d');
-        var ticketsChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Pendientes', 'En Proceso', 'Terminados'],
-                datasets: [{
-                    label: 'Tickets por Estado',
-                    data: [
-                        {{ tickets_pendientes|default:"0" }}, 
-                        {{ tickets_en_proceso|default:"0" }}, 
-                        {{ tickets_terminados|default:"0" }}
-                    ],
-                    backgroundColor: ['#ffc107', '#17a2b8', '#28a745'],
-                    borderColor: ['#d39e00', '#117a8b', '#1e7e34'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    });
-</script>
-
 {% endblock %}
