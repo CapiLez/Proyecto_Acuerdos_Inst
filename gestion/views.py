@@ -28,20 +28,23 @@ def login_view(request):
 
 @login_required
 def dashboard_view(request):
-    usuario = request.user
-    total_tickets = Ticket.objects.filter(usuario_asignado=usuario).count()
-    tickets_pendientes = Ticket.objects.filter(usuario_asignado=usuario, estado="pendiente").count()
-    tickets_en_proceso = Ticket.objects.filter(usuario_asignado=usuario, estado="en_proceso").count()
-    tickets_terminados = Ticket.objects.filter(usuario_asignado=usuario, estado="resuelto").count()
+    usuario_actual = request.user
+    
+    # Filtrar tickets asignados al usuario actual
+    total_tickets = Ticket.objects.filter(usuario_asignado=usuario_actual).count()
+    tickets_pendientes = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="pendiente").count()
+    tickets_en_proceso = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="en_progreso").count()
+    tickets_completados = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="completado").count()  # <-- Asegurar esta línea
 
     context = {
         "total_tickets": total_tickets,
         "tickets_pendientes": tickets_pendientes,
         "tickets_en_proceso": tickets_en_proceso,
-        "tickets_terminados": tickets_terminados
+        "tickets_completados": tickets_completados,  # <-- Asegurar que esta variable existe
     }
 
     return render(request, "dashboard.html", context)
+
 
 
 @login_required
@@ -49,29 +52,33 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
-
 @login_required
 def crear_ticket_view(request):
+    usuarios = Usuario.objects.all()
+
     if request.method == "POST":
         titulo = request.POST.get("titulo")
         descripcion = request.POST.get("descripcion")
         asignado_a_id = request.POST.get("asignado_a")
+        prioridad = request.POST.get("prioridad")
         estado = request.POST.get("estado")
-        usuario_asignado = Usuario.objects.get(id=asignado_a_id)
-        usuario_creador = request.user
         
-        Ticket.objects.create(
-            titulo=titulo,
-            descripcion=descripcion,
-            usuario_asignado=usuario_asignado,
-            usuario_creador=usuario_creador,
-            estado=estado
-        )
-        messages.success(request, "Ticket creado exitosamente.")
-        return render(request, "pages/create_ticket.html", {"usuarios": Usuario.objects.all()})
+        if not (titulo and descripcion and asignado_a_id and prioridad and estado):
+            messages.error(request, "Todos los campos son obligatorios.")
+        else:
+            usuario_asignado = get_object_or_404(Usuario, id=asignado_a_id)
+            ticket = Ticket.objects.create(
+                titulo=titulo,
+                descripcion=descripcion,
+                usuario_asignado=usuario_asignado,
+                usuario_creador=request.user,
+                prioridad=prioridad,
+                estado=estado
+            )
+            messages.success(request, f"El ticket '{ticket.titulo}' se creó exitosamente.")
 
-    usuarios = Usuario.objects.all()
     return render(request, "pages/create_ticket.html", {"usuarios": usuarios})
+
 
 @login_required
 def generar_reportes_view(request):
@@ -98,23 +105,25 @@ def historial_view(request):
 @login_required
 def responder_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, usuario_asignado=request.user)
+    respuestas = ticket.respuestas.all()
+
     if request.method == "POST":
         mensaje = request.POST.get("mensaje")
         nuevo_estado = request.POST.get("estado")
         
-        if mensaje:
+        if not mensaje:
+            messages.error(request, "Debe ingresar un mensaje para responder.")
+        else:
             Respuesta.objects.create(ticket=ticket, usuario=request.user, mensaje=mensaje)
             messages.success(request, "Respuesta agregada correctamente.")
-        
+
         if nuevo_estado and nuevo_estado in dict(Ticket.ESTADOS):
             ticket.estado = nuevo_estado
             ticket.save()
-            messages.success(request, "Estado actualizado correctamente.")
-        
-        return redirect("responder_ticket", ticket_id=ticket.id)
-    
-    respuestas = ticket.respuestas.all()
+            messages.success(request, "Estado del ticket actualizado.")
+
     return render(request, "pages/responder_ticket.html", {"ticket": ticket, "respuestas": respuestas})
+
 
 @login_required
 def filtrar_actividades_view(request):
@@ -143,4 +152,12 @@ def filtrar_actividades_view(request):
     
     usuarios = Usuario.objects.all()
     return render(request, "pages/filtrar_actividades.html", {"tickets": tickets, "usuarios": usuarios})
+
+@login_required
+def tickets_respondidos_view(request):
+    tickets_respondidos = Ticket.objects.filter(respuestas__isnull=False).distinct()
+    context = {
+        "tickets_respondidos": tickets_respondidos,
+    }
+    return render(request, "pages/tickets_respondidos.html", context)
 

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ticket-container">
+    <h2 style="text-align: center;">Tickets Respondidos</h2>
+
+    {% if tickets_respondidos %}
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Usuario Asignado</th>
+                        <th>Estado</th>
+                        <th>Respuestas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets_respondidos %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.titulo }}</td>
+                        <td>{% if ticket.usuario_asignado %}{{ ticket.usuario_asignado.username }}{% else %}No asignado{% endif %}</td>
+                        <td>{{ ticket.estado }}</td>
+                        <td>
+                            {% if ticket.respuestas.all %}
+                                <div class="respuestas-container">
+                                    {% for respuesta in ticket.respuestas.all %}
+                                        <div class="respuesta-card">
+                                            <p><strong>{{ respuesta.usuario.username }}</strong> - <span class="fecha">{{ respuesta.fecha_respuesta }}</span></p>
+                                            <p class="mensaje">"{{ respuesta.mensaje }}"</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p style="text-align: center; color: gray;">Sin respuestas</p>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p style="text-align: center;">No hay tickets respondidos.</p>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
+    </div>
+</div>
+
+<!-- Estilos -->
+<style>
+    body {
+        background: linear-gradient(to right, #800020, #a52a2a);
+        font-family: Arial, sans-serif;
+    }
+
+    .ticket-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 900px;
+        margin: auto;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .styled-table th, .styled-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .styled-table th {
+        background-color: #333;
+        color: white;
+    }
+
+    .respuestas-container {
+        text-align: left;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .respuesta-card {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        border-left: 4px solid #007BFF;
+    }
+
+    .fecha {
+        color: #888;
+        font-size: 12px;
+    }
+
+    .mensaje {
+        font-style: italic;
+        margin-top: 5px;
+    }
+
+    .btn-dashboard {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn-dashboard:hover {
+        background: #218838;
+    }
+</style>
+
+{% endblock %}

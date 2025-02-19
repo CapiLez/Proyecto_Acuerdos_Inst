@@ -9,6 +9,8 @@ urlpatterns = [
     path("generar-reportes/", views.generar_reportes_view, name="generar_reportes"),
     path("filtrar-actividades/", views.filtrar_actividades_view, name="filtrar_actividades"),
     path("ticket/<int:ticket_id>/responder/", views.responder_ticket_view, name="responder_ticket"),
+    path("tickets-respondidos/", views.tickets_respondidos_view, name="tickets_respondidos"),
+
 ]
 
 

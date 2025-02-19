@@ -4,15 +4,20 @@
 <h2 style="text-align: center;">Reporte de Tickets Asignados</h2>
 
 <div style="text-align: center; margin-bottom: 20px;">
-    <form method="GET" action="">
-        <input type="text" name="search" value="{{ search_query }}" placeholder="Buscar usuario..." style="padding: 10px; width: 30%; border-radius: 5px; border: 1px solid #ccc;">
-        <button type="submit" style="padding: 10px; margin-left: 10px; border-radius: 5px; background-color: #007BFF; color: white; border: none; cursor: pointer;">Buscar</button>
+    <form method="GET" action="" onsubmit="limpiarBusqueda()">
+        <input type="text" id="searchInput" name="search" value="{{ search_query }}" placeholder="Buscar usuario..." 
+               style="padding: 10px; width: 30%; border-radius: 5px; border: 1px solid #ccc;">
+        <button type="submit" 
+                style="padding: 10px; margin-left: 10px; border-radius: 5px; background-color: #007BFF; color: white; border: none; cursor: pointer;">
+            Buscar
+        </button>
     </form>
 </div>
 
 {% if reportes %}
     <div style="display: flex; justify-content: center;">
-        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 50%;">
+        <table border="1" cellspacing="0" cellpadding="5" 
+               style="border-collapse: collapse; text-align: center; width: 50%;">
             <tr>
                 <th>Usuario</th>
                 <th>Títulos de Tickets</th>
@@ -20,18 +25,18 @@
                 <th>Total de Tickets</th>
             </tr>
             {% for usuario, tickets in reportes.items %}
-            {% for ticket in tickets %}
-            <tr>
-                {% if forloop.first %}
-                <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
-                {% endif %}
-                <td>{{ ticket.titulo }}</td>
-                <td>{{ ticket.estado }}</td>
-                {% if forloop.first %}
-                <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
+                {% for ticket in tickets %}
+                <tr>
+                    {% if forloop.first %}
+                    <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
+                    {% endif %}
+                    <td>{{ ticket.titulo }}</td>
+                    <td>{{ ticket.estado }}</td>
+                    {% if forloop.first %}
+                    <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
             {% endfor %}
         </table>
     </div>
@@ -40,7 +45,17 @@
 {% endif %}
 
 <div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
+    <a href="{% url 'dashboard' %}" 
+       style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+       Volver al Dashboard
+    </a>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("searchInput").value = "";
+    });
+</script>
+
 
 {% endblock %}
