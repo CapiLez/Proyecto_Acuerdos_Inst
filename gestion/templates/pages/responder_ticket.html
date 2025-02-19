@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="text-align: center;">Responder Ticket</h2>
+
+<div style="text-align: center; margin-bottom: 20px;">
+    <h3>{{ ticket.titulo }}</h3>
+    <p><strong>Descripción:</strong> {{ ticket.descripcion }}</p>
+    <p><strong>Estado:</strong> {{ ticket.estado }}</p>
+    <p><strong>Fecha de Creación:</strong> {{ ticket.fecha_creacion }}</p>
+</div>
+
+<div style="text-align: center;">
+    <form method="POST">
+        {% csrf_token %}
+        
+        <label>Actualizar Estado:</label>
+        <select name="estado" required style="width: 50%; padding: 5px; border-radius: 5px;">
+            {% for key, value in ticket.ESTADOS %}
+                <option value="{{ key }}" {% if ticket.estado == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <br><br>
+        
+        <label>Agregar Comentario:</label>
+        <textarea name="mensaje" required style="width: 50%; height: 100px; border-radius: 5px; padding: 10px;"></textarea>
+        <br>
+        
+        <button type="submit" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Actualizar</button>
+    </form>
+</div>
+
+{% if respuestas %}
+    <h3 style="text-align: center; margin-top: 20px;">Respuestas Anteriores</h3>
+    <div style="display: flex; justify-content: center;">
+        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 60%;">
+            <tr>
+                <th>Usuario</th>
+                <th>Mensaje</th>
+                <th>Fecha</th>
+            </tr>
+            {% for respuesta in respuestas %}
+            <tr>
+                <td>{{ respuesta.usuario.username }}</td>
+                <td>{{ respuesta.mensaje }}</td>
+                <td>{{ respuesta.fecha_respuesta }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="{% url 'filtrar_actividades' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver</a>
+</div>
+
+{% endblock %}

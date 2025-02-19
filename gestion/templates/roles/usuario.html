@@ -2,6 +2,8 @@
 {% block content %}
 <h2>Panel del Usuario</h2>
 <ul>
+    <li class="list-group-item"><a href="{% url 'crear_ticket' %}"><i class="fas fa-plus-circle"></i> Crear Ticket</a></li>
+    <li class="list-group-item"><a href="{% url 'filtrar_actividades' %}"><i class="fas fa-filter"></i> Filtrar Actividades</a></li>
     <li class="logout"><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
 </ul>
 {% endblock %}

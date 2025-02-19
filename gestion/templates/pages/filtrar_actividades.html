@@ -4,12 +4,12 @@
 <h2 style="text-align: center;">Filtrar Actividades</h2>
 
 <div style="text-align: center; margin-bottom: 20px;">
-    <form method="GET" action="">
+    <form method="GET" action="" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;">
         <label>Usuario Asignado:</label>
         <select name="usuario_asignado">
             <option value="">Todos</option>
             {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                <option value="{{ usuario.id }}" {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
             {% endfor %}
         </select>
         
@@ -17,7 +17,7 @@
         <select name="usuario_creador">
             <option value="">Todos</option>
             {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                <option value="{{ usuario.id }}" {% if request.GET.usuario_creador == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
             {% endfor %}
         </select>
         
@@ -40,13 +40,14 @@
         <label>Fecha de Creación:</label>
         <input type="date" name="fecha_inicio"> a <input type="date" name="fecha_fin">
         
-        <button type="submit">Filtrar</button>
+        <button type="submit" class="btn-filtrar">Filtrar</button>
+        <a href="{% url 'filtrar_actividades' %}" class="btn-borrar-filtros">Borrar Filtros</a>
     </form>
 </div>
 
 {% if tickets %}
     <div style="display: flex; justify-content: center;">
-        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 60%;">
+        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 80%; max-width: 1200px;">
             <tr>
                 <th>ID</th>
                 <th>Título</th>
@@ -55,16 +56,26 @@
                 <th>Usuario Asignado</th>
                 <th>Usuario Creador</th>
                 <th>Fecha Creación</th>
+                <th>Última Actualización</th>
+                <th>Acciones</th>
             </tr>
             {% for ticket in tickets %}
             <tr>
                 <td>{{ ticket.id }}</td>
                 <td>{{ ticket.titulo }}</td>
                 <td>{{ ticket.estado }}</td>
-                <td>{{ ticket.prioridad }}</td>
-                <td>{{ ticket.usuario_asignado.username }}</td>
+                <td>{% if ticket.prioridad %}{{ ticket.prioridad }}{% else %}Sin prioridad{% endif %}</td>
+                <td>{% if ticket.usuario_asignado %}{{ ticket.usuario_asignado.username }}{% else %}No asignado{% endif %}</td>
                 <td>{{ ticket.usuario_creador.username }}</td>
                 <td>{{ ticket.fecha_creacion }}</td>
+                <td>{{ ticket.fecha_actualizacion }}</td>
+                <td>
+                    {% if ticket.usuario_asignado and ticket.usuario_asignado == request.user %}
+                        <a href="{% url 'responder_ticket' ticket.id %}" class="btn-responder">Responder</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -74,11 +85,8 @@
 {% endif %}
 
 <div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'filtrar_actividades' %}" style="padding: 10px 15px; background: #FF0000; color: white; text-decoration: none; border-radius: 5px;">Borrar Filtros</a>
-</div>
-
-<div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
+    <a href="{% url 'dashboard' %}" class="btn-volver" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
 </div>
 
 {% endblock %}
+

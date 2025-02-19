@@ -1,8 +1,10 @@
 {% block content %}
 <div class="login-wrapper">
     <div class="login-container">
-        <h1>Bienvenido al Sistema de Gestión de Acuerdos Institucionales</h1>
-        <img src="/static/images/dif_tabasco_logo.png" alt="DIF Tabasco" class="dif-logo">
+        <div class="logo-container">
+            <img src="/static/images/dif_tabasco_logo.png" alt="DIF Tabasco" class="dif-logo">
+        </div>
+        <h1 class="login-title">Bienvenido al Sistema de Gestión de Acuerdos Institucionales</h1>
         <h2>Iniciar Sesión</h2>
 
         {% if messages %}
@@ -47,13 +49,12 @@ function validarFormulario() {
 <style>
     body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background: linear-gradient(to right, #800020, #a52a2a);
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         margin: 0;
-        flex-direction: column;
     }
     
     .login-wrapper {
@@ -67,16 +68,25 @@ function validarFormulario() {
 
     .login-container {
         background: white;
-        padding: 30px;
+        padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         width: 350px;
         text-align: center;
+        position: relative;
+    }
+
+    .logo-container {
+        text-align: left;
+        margin-bottom: 10px;
     }
 
     .dif-logo {
-        max-width: 200px;
-        margin: 20px 0;
+        max-width: 120px;
+    }
+
+    .login-title {
+        margin-top: 10px;
     }
 
     .error-messages {
@@ -87,18 +97,18 @@ function validarFormulario() {
 
     .input-group {
         text-align: left;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     label {
         display: block;
         font-weight: bold;
-        margin-bottom: 5px;
+        margin-bottom: 3px;
     }
 
     input {
         width: 100%;
-        padding: 10px;
+        padding: 8px;
         border: 1px solid #ccc;
         border-radius: 5px;
     }
@@ -106,12 +116,12 @@ function validarFormulario() {
     button {
         background: #007BFF;
         color: white;
-        padding: 10px;
+        padding: 8px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         width: 100%;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
     }
 
@@ -121,6 +131,3 @@ function validarFormulario() {
 </style>
 
 {% endblock %}
-
-
-
