@@ -9,6 +9,7 @@ class Usuario(AbstractUser):
         ('jefe_departamento', 'Jefe de Departamento'),
         ('coordinador', 'Coordinador'),
         ('usuario', 'Usuario'),
+        ('administrador', 'Administrador'),
     ]
     
     rol = models.CharField(max_length=20, choices=ROLES, default='usuario')
@@ -19,6 +20,7 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return f"{self.username} ({self.get_rol_display()})"
+
 
 
 class Ticket(models.Model):

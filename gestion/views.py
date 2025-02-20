@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Respuesta, Usuario, Ticket
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
 
 
 def login_view(request):
@@ -125,20 +127,28 @@ def responder_ticket_view(request, ticket_id):
     return render(request, "pages/responder_ticket.html", {"ticket": ticket, "respuestas": respuestas})
 
 
+from django.utils import timezone
+from datetime import datetime
+
 @login_required
 def filtrar_actividades_view(request):
-    if request.user.rol == "coordinador":
+    usuario_actual = request.user
+
+    # Solo el Administrador y el Coordinador pueden ver todas las actividades
+    if usuario_actual.rol in ["administrador", "coordinador"]:
         tickets = Ticket.objects.all()
     else:
-        tickets = Ticket.objects.filter(usuario_asignado=request.user)
-    
+        tickets = Ticket.objects.filter(usuario_asignado=usuario_actual)
+
+    # Obtener filtros de la solicitud GET
     usuario_asignado = request.GET.get("usuario_asignado", "")
     usuario_creador = request.GET.get("usuario_creador", "")
     estado = request.GET.get("estado", "")
     prioridad = request.GET.get("prioridad", "")
     fecha_inicio = request.GET.get("fecha_inicio", "")
     fecha_fin = request.GET.get("fecha_fin", "")
-    
+
+    # Aplicar filtros
     if usuario_asignado:
         tickets = tickets.filter(usuario_asignado_id=usuario_asignado)
     if usuario_creador:
@@ -147,11 +157,21 @@ def filtrar_actividades_view(request):
         tickets = tickets.filter(estado=estado)
     if prioridad:
         tickets = tickets.filter(prioridad=prioridad)
-    if fecha_inicio and fecha_fin:
-        tickets = tickets.filter(fecha_creacion__range=[fecha_inicio, fecha_fin])
     
+    # Convertir fechas a formato con zona horaria
+    if fecha_inicio and fecha_fin:
+        try:
+            fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, "%Y-%m-%d"))
+            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, "%Y-%m-%d"))
+            tickets = tickets.filter(fecha_creacion__range=[fecha_inicio, fecha_fin])
+        except ValueError:
+            messages.error(request, "Formato de fecha inválido.")
+
     usuarios = Usuario.objects.all()
+    
     return render(request, "pages/filtrar_actividades.html", {"tickets": tickets, "usuarios": usuarios})
+
+
 
 @login_required
 def tickets_respondidos_view(request):
@@ -160,4 +180,123 @@ def tickets_respondidos_view(request):
         "tickets_respondidos": tickets_respondidos,
     }
     return render(request, "pages/tickets_respondidos.html", context)
+
+@login_required
+def gestionar_usuario_view(request):
+    usuarios = Usuario.objects.all()
+
+    if request.method == "POST":
+        nombre_usuario = request.POST.get("username").strip()
+        email = request.POST.get("email").strip()
+        contraseña = request.POST.get("password")
+        rol = request.POST.get("rol")
+
+        if not nombre_usuario or not email or not contraseña or not rol:
+            messages.error(request, "Todos los campos son obligatorios.")
+        else:
+            # Verificar si el usuario ya existe
+            if Usuario.objects.filter(username=nombre_usuario).exists():
+                messages.error(request, "El usuario ya existe.")
+            else:
+                # Crear usuario
+                usuario = Usuario.objects.create(
+                    username=nombre_usuario,
+                    email=email,
+                    password=make_password(contraseña),  # Encriptar contraseña
+                    rol=rol
+                )
+                messages.success(request, f"Usuario {usuario.username} creado con éxito.")
+                return redirect("gestionar_usuario")  # Recargar la página
+
+    return render(request, "pages/gestionar_usuario.html", {"usuarios": usuarios})
+
+
+@login_required
+def gestionar_tickets_view(request):
+    tickets = Ticket.objects.all()
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        if action == "actualizar":
+            ticket_id = request.POST.get("ticket_id")
+            nuevo_estado = request.POST.get("estado")
+
+            ticket = get_object_or_404(Ticket, id=ticket_id)
+            ticket.estado = nuevo_estado
+            ticket.save()
+            messages.success(request, f"El ticket '{ticket.titulo}' fue actualizado a '{nuevo_estado}'.")
+
+        elif action == "eliminar":
+            ticket_id = request.POST.get("ticket_id")
+            ticket = get_object_or_404(Ticket, id=ticket_id)
+            ticket.delete()
+            messages.success(request, "El ticket fue eliminado correctamente.")
+
+    return render(request, "pages/gestionar_tickets.html", {"tickets": tickets})
+
+@login_required
+def editar_usuario_view(request):
+    if request.method == "POST":
+        user_id = request.POST.get("user_id")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        rol = request.POST.get("rol")
+
+        usuario = get_object_or_404(Usuario, id=user_id)
+
+        if email:
+            usuario.email = email
+        if password:
+            usuario.set_password(password)
+        if rol:
+            usuario.rol = rol
+
+        usuario.save()
+        messages.success(request, f"El usuario {usuario.username} ha sido actualizado correctamente.")
+
+    return redirect("gestionar_usuario")
+
+@login_required
+def eliminar_usuario_view(request, user_id):
+    usuario = get_object_or_404(Usuario, id=user_id)
+
+    # Evitar que el usuario se elimine a sí mismo
+    if request.user == usuario:
+        messages.error(request, "No puedes eliminar tu propio usuario.")
+        return redirect("gestionar_usuario")
+
+    usuario.delete()
+    messages.success(request, f"El usuario {usuario.username} ha sido eliminado correctamente.")
+
+    return redirect("gestionar_usuario")
+
+@login_required
+def editar_ticket_view(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+
+    if request.method == "POST":
+        ticket.titulo = request.POST.get("titulo", ticket.titulo)
+        ticket.descripcion = request.POST.get("descripcion", ticket.descripcion)
+        ticket.estado = request.POST.get("estado", ticket.estado)
+        ticket.usuario_asignado_id = request.POST.get("usuario_asignado", ticket.usuario_asignado_id)
+        ticket.prioridad = request.POST.get("prioridad", ticket.prioridad)
+        ticket.save()
+        messages.success(request, "Ticket actualizado correctamente.")
+        return redirect("gestionar_tickets")
+
+    usuarios = Usuario.objects.all()
+    return render(request, "pages/editar_ticket.html", {"ticket": ticket, "usuarios": usuarios})
+
+@login_required
+def eliminar_ticket_view(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+
+    if request.method == "POST":
+        ticket.delete()
+        messages.success(request, "Ticket eliminado correctamente.")
+        return redirect("gestionar_tickets")
+
+    return render(request, "pages/eliminar_ticket.html", {"ticket": ticket})
+
 

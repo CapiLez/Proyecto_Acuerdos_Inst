@@ -44,7 +44,6 @@
             background: #444;
             color: #ffffff;
         }
-        /* Estilo para el enlace activo */
         .sidebar a.active {
             background: #444;
             color: #ffffff;
@@ -57,53 +56,30 @@
             background: #ffffff;
             box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
         }
-        .btn {
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: background 0.3s, transform 0.2s;
-            display: inline-block;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        .btn-responder {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-        }
-        .btn-responder:hover {
-            background-color: #0056b3;
-        }
-        .btn-borrar-filtros {
-            background-color: red;
-            color: white;
-            border: none;
-        }
-        .btn-borrar-filtros:hover {
-            background-color: darkred;
-        }
-        .btn-filtrar {
-            background-color: #28a745;
-            color: white;
-            border: none;
-        }
-        .btn-filtrar:hover {
-            background-color: #218838;
-        }
     </style>
 </head>
 <body>
     <div class="sidebar">
         <h2>Menú</h2>
+
+        <!-- Accesible para todos los usuarios -->
         <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
         <a href="{% url 'crear_ticket' %}" class="{% if request.resolver_match.url_name == 'crear_ticket' %}active{% endif %}">Crear Ticket</a>
-        <a href="{% url 'generar_reportes' %}" class="{% if request.resolver_match.url_name == 'generar_reportes' %}active{% endif %}">Generar Reportes</a>
         <a href="{% url 'filtrar_actividades' %}" class="{% if request.resolver_match.url_name == 'filtrar_actividades' %}active{% endif %}">Filtrar Actividades</a>
+
+        {% if request.user.rol in "administrador,coordinador,director" %}
+        <a href="{% url 'generar_reportes' %}" class="{% if request.resolver_match.url_name == 'generar_reportes' %}active{% endif %}">Generar Reportes</a>
+        {% endif %}
+
+        {% if request.user.rol in "administrador,coordinador" %}
         <a href="{% url 'tickets_respondidos' %}" class="{% if request.resolver_match.url_name == 'tickets_respondidos' %}active{% endif %}">Tickets Respondidos</a>
-        
+        {% endif %}
+
+        {% if request.user.rol == "administrador" %}
+        <a href="{% url 'gestionar_usuario' %}" class="{% if request.resolver_match.url_name == 'gestionar_usuario' %}active{% endif %}">Gestionar Usuarios</a>
+        <a href="{% url 'gestionar_tickets' %}" class="{% if request.resolver_match.url_name == 'gestionar_tickets' %}active{% endif %}">Gestionar Tickets</a>
+        {% endif %}
+
         <a href="{% url 'logout' %}">Cerrar Sesión</a>
     </div>
 

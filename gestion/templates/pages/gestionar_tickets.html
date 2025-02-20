@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Gestión de Tickets</h2>
+
+        {% if tickets %}
+            <div class="table-container">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Usuario Asignado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.titulo }}</td>
+                            <td>{{ ticket.estado }}</td>
+                            <td>
+                                {% if ticket.usuario_asignado %}
+                                    {{ ticket.usuario_asignado.username }}
+                                {% else %}
+                                    No asignado
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'editar_ticket' ticket.id %}" class="btn-editar">Editar</a>
+                                <a href="{% url 'eliminar_ticket' ticket.id %}" class="btn-eliminar">Eliminar</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-tickets">No hay tickets disponibles.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos CSS */
+    .responded-background {
+        background: linear-gradient(135deg, #800020, #4a667d);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .responded-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 95%;
+        max-width: 900px;
+        text-align: center;
+    }
+    
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid #2c3e50;
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+    }
+    
+    .styled-table thead {
+        background: #2c3e50;
+        color: white;
+    }
+    
+    .styled-table th, .styled-table td {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #2c3e50;
+        font-size: 15px;
+        font-family: 'Arial', sans-serif;
+    }
+    
+    .btn-editar {
+        background: #007BFF;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+    
+    .btn-eliminar {
+        background: #dc3545;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+    
+    .btn-volver {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+    }
+</style>
+
+{% endblock %}

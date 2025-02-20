@@ -1,77 +1,348 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 style="text-align: center;">Gestión de Usuarios</h2>
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Gestión de Usuarios</h2>
 
-{% if messages %}
-    <div style="text-align: center; color: red;">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
+        <!-- Mensajes de éxito y error -->
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <p class="message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+
+        <!-- Pestañas para cambiar entre "Crear Usuario" y "Editar Usuario" -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="showTab('crear')">Crear Usuario</button>
+            <button class="tab-btn" onclick="showTab('editar')">Editar Usuario</button>
+        </div>
+
+        <!-- FORMULARIO PARA CREAR USUARIO -->
+        <div id="crear" class="tab-content active">
+            <form method="POST" action="{% url 'gestionar_usuario' %}" class="user-form">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label>Nombre de Usuario:</label>
+                    <input type="text" name="username" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Email:</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Contraseña:</label>
+                    <input type="password" name="password" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Rol:</label>
+                    <select name="rol" required>
+                        <option value="director">Director</option>
+                        <option value="subdirector">Subdirector</option>
+                        <option value="jefe_departamento">Jefe de Departamento</option>
+                        <option value="coordinador">Coordinador</option>
+                        <option value="usuario">Usuario</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Crear Usuario</button>
+            </form>
+        </div>
+
+        <!-- FORMULARIO PARA EDITAR USUARIO -->
+        <div id="editar" class="tab-content">
+            <form method="POST" action="{% url 'editar_usuario' %}" class="user-form">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label>Seleccionar Usuario:</label>
+                    <select name="user_id" required>
+                        {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.username }} ({{ usuario.rol }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nuevo Email:</label>
+                    <input type="email" name="email">
+                </div>
+
+                <div class="input-group">
+                    <label>Nueva Contraseña:</label>
+                    <input type="password" name="password">
+                </div>
+
+                <div class="input-group">
+                    <label>Nuevo Rol:</label>
+                    <select name="rol">
+                        <option value="director">Director</option>
+                        <option value="subdirector">Subdirector</option>
+                        <option value="jefe_departamento">Jefe de Departamento</option>
+                        <option value="coordinador">Coordinador</option>
+                        <option value="usuario">Usuario</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Actualizar Usuario</button>
+            </form>
+        </div>
+
+        <!-- LISTA DE USUARIOS REGISTRADOS -->
+        <h2 class="responded-title">Usuarios Registrados</h2>
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id }}</td>
+                        <td>{{ usuario.username }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.rol }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'eliminar_usuario' usuario.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-eliminar">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
+        </div>
     </div>
-{% endif %}
-
-<div style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <form method="POST" style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; background: white;">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="crear">
-        
-        <label>Nombre de Usuario:</label>
-        <input type="text" name="username" required>
-
-        <label>Email:</label>
-        <input type="email" name="email" required>
-
-        <label>Contraseña:</label>
-        <input type="password" name="password" required>
-
-        <label>Rol:</label>
-        <select name="rol">
-            <option value="director">Director</option>
-            <option value="subdirector">Subdirector</option>
-            <option value="jefe_departamento">Jefe de Departamento</option>
-            <option value="coordinador">Coordinador</option>
-            <option value="usuario">Usuario</option>
-        </select>
-
-        <button type="submit" style="background-color: green; color: white; padding: 10px; margin-top: 10px; border-radius: 5px;">Crear Usuario</button>
-    </form>
 </div>
 
-<h3 style="text-align: center;">Usuarios Registrados</h3>
-<div style="display: flex; justify-content: center;">
-    <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 60%;">
-        <tr>
-            <th>ID</th>
-            <th>Usuario</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-        </tr>
-        {% for usuario in usuarios %}
-        <tr>
-            <td>{{ usuario.id }}</td>
-            <td>{{ usuario.username }}</td>
-            <td>{{ usuario.email }}</td>
-            <td>{{ usuario.get_rol_display }}</td>
-            <td>
-                {% if usuario != request.user %}
-                <form method="POST" style="display: inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="eliminar">
-                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                    <button type="submit" style="background-color: red; color: white; padding: 5px; border-radius: 5px;">Eliminar</button>
-                </form>
-                {% else %}
-                -
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-</div>
+<!-- JavaScript para manejar pestañas -->
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
 
-<div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
-</div>
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+</script>
+
+<style>
+    /* Fondo degradado */
+    .responded-background {
+        background: linear-gradient(135deg, #800020, #4a667d);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    /* Contenedor principal */
+    .responded-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 95%;
+        max-width: 900px;
+        text-align: center;
+    }
+
+    /* Mensajes */
+    .message-container {
+        margin-bottom: 15px;
+    }
+    .message {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+
+    /* Pestañas */
+    .tab-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .tab-btn {
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        background: #444;
+        color: white;
+        border-radius: 5px;
+        margin: 0 5px;
+    }
+    .tab-btn.active {
+        background: #28a745;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Formulario */
+    .user-form {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+    }
+    .input-group {
+        text-align: left;
+        margin-bottom: 15px;
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    input, select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .btn-submit {
+        background: #007BFF;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    /* Botón Eliminar */
+    .btn-eliminar {
+        background: red;
+        color: white;
+        padding: 8px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    /* Contenedor de la tabla */
+    .table-container {
+        overflow-x: auto;
+        margin-top: 20px;
+    }
+
+    /* Tabla estilizada */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid #2c3e50;
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .styled-table thead {
+        background: #2c3e50;
+        color: white;
+    }
+
+    .styled-table th,
+    .styled-table td {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #2c3e50;
+        font-size: 15px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .styled-table tr:nth-child(even) {
+        background: #f1f1f1;
+    }
+
+    .styled-table tr:hover {
+        background: #dfe6e9;
+    }
+
+    /* Botón de eliminar */
+    .btn-delete {
+        background-color: red;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .btn-delete:hover {
+        background-color: darkred;
+    }
+
+    /* Botón de volver */
+    .btn-volver {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-volver:hover {
+        background: #218838;
+        transform: scale(1.05);
+    }
+
+    .message-container {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+    .message {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        width: 80%;
+        margin: auto;
+    }
+
+    .message.success {
+        background-color: #28a745;
+    }
+
+    .message.error {
+        background-color: #dc3545;
+    }
+
+</style>
+
 {% endblock %}
