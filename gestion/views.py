@@ -277,16 +277,18 @@ def editar_ticket_view(request, ticket_id):
 
     if request.method == "POST":
         ticket.titulo = request.POST.get("titulo", ticket.titulo)
-        ticket.descripcion = request.POST.get("descripcion", ticket.descripcion)
         ticket.estado = request.POST.get("estado", ticket.estado)
         ticket.usuario_asignado_id = request.POST.get("usuario_asignado", ticket.usuario_asignado_id)
         ticket.prioridad = request.POST.get("prioridad", ticket.prioridad)
+        ticket.descripcion = request.POST.get("descripcion", ticket.descripcion)  # ✅ Permitir edición del comentario
         ticket.save()
-        messages.success(request, "Ticket actualizado correctamente.")
+
+        messages.success(request, f"El ticket '{ticket.titulo}' ha sido actualizado correctamente.")
         return redirect("gestionar_tickets")
 
     usuarios = Usuario.objects.all()
     return render(request, "pages/editar_ticket.html", {"ticket": ticket, "usuarios": usuarios})
+
 
 @login_required
 def eliminar_ticket_view(request, ticket_id):
@@ -294,9 +296,7 @@ def eliminar_ticket_view(request, ticket_id):
 
     if request.method == "POST":
         ticket.delete()
-        messages.success(request, "Ticket eliminado correctamente.")
-        return redirect("gestionar_tickets")
+        messages.success(request, "El ticket ha sido eliminado correctamente.")  # Mensaje de éxito
+        return redirect("gestionar_tickets")  # Redirige a la página de gestión de tickets
 
     return render(request, "pages/eliminar_ticket.html", {"ticket": ticket})
-
-

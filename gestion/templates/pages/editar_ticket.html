@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="edit-ticket-background">
+    <div class="edit-ticket-container">
+        <h2 class="edit-ticket-title">Editar Ticket</h2>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                <label>Título:</label>
+                <input type="text" name="titulo" value="{{ ticket.titulo }}" required>
+            </div>
+
+            <div class="input-group">
+                <label>Comentario:</label>
+                <textarea name="descripcion" rows="4" required>{{ ticket.descripcion }}</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Estado:</label>
+                <select name="estado">
+                    <option value="pendiente" {% if ticket.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                    <option value="en_progreso" {% if ticket.estado == "en_progreso" %}selected{% endif %}>En Progreso</option>
+                    <option value="completado" {% if ticket.estado == "completado" %}selected{% endif %}>Completado</option>
+                    <option value="cancelado" {% if ticket.estado == "cancelado" %}selected{% endif %}>Cancelado</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Prioridad:</label>
+                <select name="prioridad">
+                    <option value="baja" {% if ticket.prioridad == "baja" %}selected{% endif %}>Baja</option>
+                    <option value="media" {% if ticket.prioridad == "media" %}selected{% endif %}>Media</option>
+                    <option value="alta" {% if ticket.prioridad == "alta" %}selected{% endif %}>Alta</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Usuario Asignado:</label>
+                <select name="usuario_asignado">
+                    {% for usuario in usuarios %}
+                        <option value="{{ usuario.id }}" {% if ticket.usuario_asignado.id == usuario.id %}selected{% endif %}>
+                            {{ usuario.username }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn-submit">Actualizar Ticket</button>
+            <a href="{% url 'gestionar_tickets' %}" class="btn-cancelar">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Fondo con degradado */
+    .edit-ticket-background {
+        background: linear-gradient(135deg, #800020, #4a667d);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    /* Contenedor principal */
+    .edit-ticket-container {
+        background: rgba(255, 255, 255, 0.97);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 600px;
+        text-align: center;
+    }
+
+    /* Título */
+    .edit-ticket-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 20px;
+    }
+
+    /* Grupo de inputs */
+    .input-group {
+        text-align: left;
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        font-family: 'Arial', sans-serif;
+        background: #f8f9fa;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    /* Botón de enviar */
+    .btn-submit {
+        background-color: #28a745;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .btn-submit:hover {
+        background-color: #218838;
+    }
+
+    /* Botón de cancelar */
+    .btn-cancelar {
+        display: inline-block;
+        background-color: red;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .btn-cancelar:hover {
+        background-color: darkred;
+    }
+</style>
+
+{% endblock %}
