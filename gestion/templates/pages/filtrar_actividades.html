@@ -1,92 +1,306 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 style="text-align: center;">Filtrar Actividades</h2>
+<div class="filter-background">
+    <div class="filter-container">
+        <h2 class="filter-title">Filtrar Actividades</h2>
 
-<div style="text-align: center; margin-bottom: 20px;">
-    <form method="GET" action="" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;">
-        <label>Usuario Asignado:</label>
-        <select name="usuario_asignado">
-            <option value="">Todos</option>
-            {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}" {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
-            {% endfor %}
-        </select>
-        
-        <label>Usuario Creador:</label>
-        <select name="usuario_creador">
-            <option value="">Todos</option>
-            {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}" {% if request.GET.usuario_creador == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
-            {% endfor %}
-        </select>
-        
-        <label>Estado:</label>
-        <select name="estado">
-            <option value="">Todos</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="en_proceso">En Proceso</option>
-            <option value="resuelto">Terminado</option>
-        </select>
-        
-        <label>Prioridad:</label>
-        <select name="prioridad">
-            <option value="">Todas</option>
-            <option value="baja">Baja</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
-        </select>
-        
-        <label>Fecha de Creación:</label>
-        <input type="date" name="fecha_inicio"> a <input type="date" name="fecha_fin">
-        
-        <button type="submit" class="btn-filtrar">Filtrar</button>
-        <a href="{% url 'filtrar_actividades' %}" class="btn-borrar-filtros">Borrar Filtros</a>
-    </form>
-</div>
+        <!-- Formulario de filtros -->
+        <form method="GET" action="" class="filter-form">
+            <label>Usuario Asignado:</label>
+            <select name="usuario_asignado">
+                <option value="">Todos</option>
+                {% for usuario in usuarios %}
+                    <option value="{{ usuario.id }}"
+                        {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>
+                        {{ usuario.username }}
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <label>Usuario Creador:</label>
+            <select name="usuario_creador">
+                <option value="">Todos</option>
+                {% for usuario in usuarios %}
+                    <option value="{{ usuario.id }}"
+                        {% if request.GET.usuario_creador == usuario.id|stringformat:"s" %}selected{% endif %}>
+                        {{ usuario.username }}
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <label>Estado:</label>
+            <select name="estado">
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_proceso">En Proceso</option>
+                <option value="resuelto">Terminado</option>
+            </select>
+            
+            <label>Prioridad:</label>
+            <select name="prioridad">
+                <option value="">Todas</option>
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+            </select>
+            
+            <label>Fecha de Creación:</label>
+            <div class="date-range">
+                <input type="date" name="fecha_inicio">
+                <span>a</span>
+                <input type="date" name="fecha_fin">
+            </div>
+            
+            <button type="submit" class="btn-filtrar">Filtrar</button>
+            <a href="{% url 'filtrar_actividades' %}" class="btn-borrar-filtros">Borrar Filtros</a>
+        </form>
 
-{% if tickets %}
-    <div style="display: flex; justify-content: center;">
-        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 80%; max-width: 1200px;">
-            <tr>
-                <th>ID</th>
-                <th>Título</th>
-                <th>Estado</th>
-                <th>Prioridad</th>
-                <th>Usuario Asignado</th>
-                <th>Usuario Creador</th>
-                <th>Fecha Creación</th>
-                <th>Última Actualización</th>
-                <th>Acciones</th>
-            </tr>
-            {% for ticket in tickets %}
-            <tr>
-                <td>{{ ticket.id }}</td>
-                <td>{{ ticket.titulo }}</td>
-                <td>{{ ticket.estado }}</td>
-                <td>{% if ticket.prioridad %}{{ ticket.prioridad }}{% else %}Sin prioridad{% endif %}</td>
-                <td>{% if ticket.usuario_asignado %}{{ ticket.usuario_asignado.username }}{% else %}No asignado{% endif %}</td>
-                <td>{{ ticket.usuario_creador.username }}</td>
-                <td>{{ ticket.fecha_creacion }}</td>
-                <td>{{ ticket.fecha_actualizacion }}</td>
-                <td>
-                    {% if ticket.usuario_asignado and ticket.usuario_asignado == request.user %}
-                        <a href="{% url 'responder_ticket' ticket.id %}" class="btn-responder">Responder</a>
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        <!-- Tabla de resultados -->
+        {% if tickets %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Usuario Asignado</th>
+                            <th>Usuario Creador</th>
+                            <th>Fecha Creación</th>
+                            <th>Última Actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.titulo }}</td>
+                            <td>{{ ticket.estado }}</td>
+                            <td>
+                                {% if ticket.prioridad %}
+                                    {{ ticket.prioridad }}
+                                {% else %}
+                                    Sin prioridad
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ticket.usuario_asignado %}
+                                    {{ ticket.usuario_asignado.username }}
+                                {% else %}
+                                    No asignado
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.usuario_creador.username }}</td>
+                            <td>{{ ticket.fecha_creacion }}</td>
+                            <td>{{ ticket.fecha_actualizacion }}</td>
+                            <td>
+                                {% if ticket.usuario_asignado and ticket.usuario_asignado == request.user %}
+                                    <a href="{% url 'responder_ticket' ticket.id %}" class="btn-responder">Responder</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-activities">No hay actividades que coincidan con los filtros seleccionados.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
+        </div>
     </div>
-{% else %}
-    <p style="text-align: center;">No hay actividades que coincidan con los filtros seleccionados.</p>
-{% endif %}
-
-<div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" class="btn-volver" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
 </div>
+
+<style>
+    /* Fondo oscuro */
+    .filter-background {
+        background: linear-gradient(135deg, #800020, #4a667d);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    /* Contenedor principal */
+    .filter-container {
+        background: rgba(255, 255, 255, 0.97);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 95%;
+        max-width: 1000px;
+        text-align: center;
+    }
+
+    /* Título elegante */
+    .filter-title {
+        font-family: 'Georgia', serif;
+        font-size: 28px;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    /* Formulario de filtros */
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .filter-form label {
+        font-weight: bold;
+        font-family: 'Arial', sans-serif;
+        color: #2c3e50;
+    }
+
+    .filter-form select,
+    .filter-form input[type="date"] {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        font-family: 'Arial', sans-serif;
+        background: #f8f9fa;
+    }
+
+    .date-range {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .date-range span {
+        font-weight: bold;
+        font-family: 'Arial', sans-serif;
+        color: #2c3e50;
+    }
+
+    /* Botones de filtros */
+    .btn-filtrar,
+    .btn-borrar-filtros {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-filtrar {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-filtrar:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    .btn-borrar-filtros {
+        background-color: red;
+        color: white;
+    }
+
+    .btn-borrar-filtros:hover {
+        background-color: darkred;
+        transform: scale(1.05);
+    }
+
+    /* Tabla */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #2c3e50;
+        margin: 0 auto;
+    }
+
+    thead {
+        background: #2c3e50;
+        color: white;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #2c3e50;
+        font-size: 15px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    tr:nth-child(even) {
+        background: #f1f1f1;
+    }
+
+    tr:hover {
+        background: #dfe6e9;
+    }
+
+    /* Mensaje de no hay actividades */
+    .no-activities {
+        font-size: 16px;
+        font-weight: bold;
+        color: #555;
+        margin-top: 10px;
+    }
+
+    /* Botón Responder */
+    .btn-responder {
+        background-color: #007BFF;
+        color: white;
+        padding: 6px 12px;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-responder:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Botón Volver */
+    .btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn-volver {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 20px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-volver:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+</style>
 
 {% endblock %}
-

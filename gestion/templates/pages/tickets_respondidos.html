@@ -1,100 +1,150 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="ticket-container">
-    <h2 style="text-align: center;">Tickets Respondidos</h2>
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Tickets Respondidos</h2>
 
-    {% if tickets_respondidos %}
-        <div class="table-container">
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Usuario Asignado</th>
-                        <th>Estado</th>
-                        <th>Respuestas</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ticket in tickets_respondidos %}
-                    <tr>
-                        <td>{{ ticket.id }}</td>
-                        <td>{{ ticket.titulo }}</td>
-                        <td>{% if ticket.usuario_asignado %}{{ ticket.usuario_asignado.username }}{% else %}No asignado{% endif %}</td>
-                        <td>{{ ticket.estado }}</td>
-                        <td>
-                            {% if ticket.respuestas.all %}
-                                <div class="respuestas-container">
-                                    {% for respuesta in ticket.respuestas.all %}
-                                        <div class="respuesta-card">
-                                            <p><strong>{{ respuesta.usuario.username }}</strong> - <span class="fecha">{{ respuesta.fecha_respuesta }}</span></p>
-                                            <p class="mensaje">"{{ respuesta.mensaje }}"</p>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                <p style="text-align: center; color: gray;">Sin respuestas</p>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        {% if tickets_respondidos %}
+            <div class="table-container">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Usuario Asignado</th>
+                            <th>Estado</th>
+                            <th>Respuestas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets_respondidos %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.titulo }}</td>
+                            <td>
+                                {% if ticket.usuario_asignado %}
+                                    {{ ticket.usuario_asignado.username }}
+                                {% else %}
+                                    No asignado
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.estado }}</td>
+                            <td>
+                                {% if ticket.respuestas.all %}
+                                    <!-- SECCIÓN DE RESPUESTAS NO MODIFICADA -->
+                                    <div class="respuestas-container">
+                                        {% for respuesta in ticket.respuestas.all %}
+                                            <div class="respuesta-card">
+                                                <p>
+                                                    <strong>{{ respuesta.usuario.username }}</strong> 
+                                                    - <span class="fecha">{{ respuesta.fecha_respuesta }}</span>
+                                                </p>
+                                                <p class="mensaje">"{{ respuesta.mensaje }}"</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p style="text-align: center; color: gray;">Sin respuestas</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-tickets">No hay tickets respondidos.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
         </div>
-    {% else %}
-        <p style="text-align: center;">No hay tickets respondidos.</p>
-    {% endif %}
-
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
     </div>
 </div>
 
-<!-- Estilos -->
 <style>
-    body {
-        background: linear-gradient(to right, #800020, #a52a2a);
-        font-family: Arial, sans-serif;
-    }
-
-    .ticket-container {
-        background: white;
+    /* Fondo oscuro unificado */
+    .responded-background {
+        background: linear-gradient(135deg, #800020, #4a667d);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        width: 90%;
-        max-width: 900px;
-        margin: auto;
     }
 
+    /* Contenedor principal */
+    .responded-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 95%;
+        max-width: 900px;
+        text-align: center;
+    }
+
+    /* Título elegante */
+    .responded-title {
+        font-family: 'Georgia', serif;
+        font-size: 28px;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    /* Tabla con celdas cerradas */
     .table-container {
         overflow-x: auto;
+        margin-top: 20px;
     }
 
     .styled-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
+        border: 2px solid #2c3e50;
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
     }
 
-    .styled-table th, .styled-table td {
-        padding: 10px;
-        border: 1px solid #ddd;
-        text-align: center;
-    }
-
-    .styled-table th {
-        background-color: #333;
+    .styled-table thead {
+        background: #2c3e50;
         color: white;
     }
 
+    .styled-table th,
+    .styled-table td {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #2c3e50;
+        font-size: 15px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .styled-table tr:nth-child(even) {
+        background: #f1f1f1;
+    }
+
+    .styled-table tr:hover {
+        background: #dfe6e9;
+    }
+
+    /* Mensaje sin tickets */
+    .no-tickets {
+        font-size: 16px;
+        font-weight: bold;
+        color: #555;
+        margin-top: 10px;
+    }
+
+    /* SECCIÓN DE RESPUESTAS NO MODIFICADA */
     .respuestas-container {
         text-align: left;
         max-height: 200px;
         overflow-y: auto;
     }
-
     .respuesta-card {
         background: #f8f9fa;
         padding: 10px;
@@ -102,30 +152,36 @@
         margin-bottom: 10px;
         border-left: 4px solid #007BFF;
     }
-
     .fecha {
         color: #888;
         font-size: 12px;
     }
-
     .mensaje {
         font-style: italic;
         margin-top: 5px;
     }
 
-    .btn-dashboard {
+    /* Botón Volver */
+    .btn-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .btn-volver {
         display: inline-block;
-        padding: 10px 20px;
+        padding: 12px 20px;
         background: #28a745;
         color: white;
         text-decoration: none;
-        border-radius: 5px;
+        border-radius: 8px;
         font-weight: bold;
-        transition: 0.3s;
+        font-size: 15px;
+        transition: background 0.3s ease, transform 0.2s ease;
     }
 
-    .btn-dashboard:hover {
+    .btn-volver:hover {
         background: #218838;
+        transform: scale(1.05);
     }
 </style>
 

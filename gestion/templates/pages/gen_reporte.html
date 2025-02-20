@@ -1,61 +1,214 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 style="text-align: center;">Reporte de Tickets Asignados</h2>
+<div class="report-background">
+    <div class="report-container">
+        <h2 class="report-title">Reporte de Tickets Asignados</h2>
 
-<div style="text-align: center; margin-bottom: 20px;">
-    <form method="GET" action="" onsubmit="limpiarBusqueda()">
-        <input type="text" id="searchInput" name="search" value="{{ search_query }}" placeholder="Buscar usuario..." 
-               style="padding: 10px; width: 30%; border-radius: 5px; border: 1px solid #ccc;">
-        <button type="submit" 
-                style="padding: 10px; margin-left: 10px; border-radius: 5px; background-color: #007BFF; color: white; border: none; cursor: pointer;">
-            Buscar
-        </button>
-    </form>
-</div>
+        <form method="GET" action="" class="search-form">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Buscar usuario...">
+            <button type="submit">Buscar</button>
+        </form>
 
-{% if reportes %}
-    <div style="display: flex; justify-content: center;">
-        <table border="1" cellspacing="0" cellpadding="5" 
-               style="border-collapse: collapse; text-align: center; width: 50%;">
-            <tr>
-                <th>Usuario</th>
-                <th>Títulos de Tickets</th>
-                <th>Estado</th>
-                <th>Total de Tickets</th>
-            </tr>
-            {% for usuario, tickets in reportes.items %}
-                {% for ticket in tickets %}
-                <tr>
-                    {% if forloop.first %}
-                    <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
-                    {% endif %}
-                    <td>{{ ticket.titulo }}</td>
-                    <td>{{ ticket.estado }}</td>
-                    {% if forloop.first %}
-                    <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            {% endfor %}
-        </table>
+        {% if reportes %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Títulos de Tickets</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario, tickets in reportes.items %}
+                        {% for ticket in tickets %}
+                        <tr>
+                            {% if forloop.first %}
+                            <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
+                            {% endif %}
+                            <td>{{ ticket.titulo }}</td>
+                            <td><span class="status {{ ticket.estado|lower }}">{{ ticket.estado }}</span></td>
+                            {% if forloop.first %}
+                            <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-tickets">No hay tickets asignados.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
+        </div>
     </div>
-{% else %}
-    <p style="text-align: center;">No hay tickets asignados.</p>
-{% endif %}
-
-<div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" 
-       style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-       Volver al Dashboard
-    </a>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("searchInput").value = "";
-    });
-</script>
+<style>
+    /* Fondo azul oscuro */
+    .report-background {
+        background: linear-gradient(135deg, #800020, #4a667d);; /* Azul oscuro elegante */
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
 
+    /* Contenedor */
+    .report-container {
+        background: rgba(250, 250, 250, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 98%;
+        max-width: 1000px;
+        text-align: center;
+    }
+
+    /* Título */
+    .report-title {
+        font-family: 'Georgia', serif;
+        font-size: 28px;
+        color: 2c3e50;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    /* Formulario */
+    .search-form {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .search-form input {
+        padding: 10px;
+        border: 2px solid #bbb;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #f8f9fa;
+        width: 60%;
+    }
+
+    .search-form button {
+        background: #007BFF;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .search-form button:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Tabla */
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #2c3e50;
+    }
+
+    thead {
+        background: #2c3e50;
+        color: white;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #2c3e50;
+        font-size: 15px;
+    }
+
+    tr:nth-child(even) {
+        background: #f1f1f1;
+    }
+
+    tr:hover {
+        background: #dfe6e9;
+    }
+
+    /* Estados corregidos */
+    .status {
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        text-transform: capitalize;
+        display: inline-block;
+        width: 90px;
+        text-align: center;
+    }
+
+    .pendiente {
+        background: #ffc107;
+        color: #212529; /* Asegura contraste */
+    }
+
+    .en_proceso {
+        background: #007bff;
+        color: white;
+    }
+
+    .resuelto {
+        background: #28a745;
+        color: white;
+    }
+
+    .completad {
+        background: #6c757d;
+        color: white;
+    }
+
+    /* Mensaje sin tickets */
+    .no-tickets {
+        font-size: 16px;
+        font-weight: bold;
+        color: #f8f9fa;
+        margin-top: 10px;
+    }
+
+    /* Botón */
+    .btn-container {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .btn-dashboard {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 15px;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-dashboard:hover {
+        background: #218838;
+        transform: scale(1.05);
+    }
+</style>
 
 {% endblock %}

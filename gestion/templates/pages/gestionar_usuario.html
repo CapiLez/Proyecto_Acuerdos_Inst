@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="text-align: center;">Gestión de Usuarios</h2>
+
+{% if messages %}
+    <div style="text-align: center; color: red;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div style="display: flex; justify-content: center; margin-bottom: 20px;">
+    <form method="POST" style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; background: white;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="crear">
+        
+        <label>Nombre de Usuario:</label>
+        <input type="text" name="username" required>
+
+        <label>Email:</label>
+        <input type="email" name="email" required>
+
+        <label>Contraseña:</label>
+        <input type="password" name="password" required>
+
+        <label>Rol:</label>
+        <select name="rol">
+            <option value="director">Director</option>
+            <option value="subdirector">Subdirector</option>
+            <option value="jefe_departamento">Jefe de Departamento</option>
+            <option value="coordinador">Coordinador</option>
+            <option value="usuario">Usuario</option>
+        </select>
+
+        <button type="submit" style="background-color: green; color: white; padding: 10px; margin-top: 10px; border-radius: 5px;">Crear Usuario</button>
+    </form>
+</div>
+
+<h3 style="text-align: center;">Usuarios Registrados</h3>
+<div style="display: flex; justify-content: center;">
+    <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 60%;">
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+        </tr>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.get_rol_display }}</td>
+            <td>
+                {% if usuario != request.user %}
+                <form method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="eliminar">
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                    <button type="submit" style="background-color: red; color: white; padding: 5px; border-radius: 5px;">Eliminar</button>
+                </form>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
+</div>
+{% endblock %}

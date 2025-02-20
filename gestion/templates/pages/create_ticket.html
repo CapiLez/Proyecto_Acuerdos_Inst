@@ -1,185 +1,210 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="ticket-container">
-    <h2 style="text-align: center;">Crear Nuevo Ticket</h2>
-
-    <!-- Mensajes de éxito o error -->
-    <div id="message-container">
+<div class="ticket-background">
+    <div class="ticket-container">
+        <h2 class="ticket-title">Crear Nuevo Ticket</h2>
+        
         {% if messages %}
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    </div>
-
-    <!-- Formulario -->
-    <form method="POST" enctype="multipart/form-data" class="ticket-form">
-        {% csrf_token %}
-
-        <div class="input-group">
-            <label>Título:</label>
-            <input type="text" name="titulo" required>
-        </div>
-
-        <div class="input-group">
-            <label>Descripción:</label>
-            <textarea name="descripcion" required></textarea>
-        </div>
-
-        <div class="input-group">
-            <label>Adjuntar Archivo:</label>
-            <input type="file" name="archivo">
-        </div>
-
-        <div class="input-group">
-            <label>Asignado a:</label>
-            <select name="asignado_a" required>
-                <option value="">Seleccione un usuario</option>
-                {% for usuario in usuarios %}
-                    <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+            <div class="message-container">
+                {% for message in messages %}
+                    <p class="message {{ message.tags }}">{{ message }}</p>
                 {% endfor %}
-            </select>
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="styled-form">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                <label>Título:</label>
+                <input type="text" name="titulo" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Descripción:</label>
+                <textarea name="descripcion" required></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label>Adjuntar Archivo:</label>
+                <input type="file" name="archivo">
+            </div>
+            
+            <div class="input-group">
+                <label>Asignado a:</label>
+                <select name="asignado_a" required>
+                    <option value="">Seleccione un usuario</option>
+                    {% for usuario in usuarios %}
+                        <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Prioridad:</label>
+                <select name="prioridad" required>
+                    <option value="baja">Baja</option>
+                    <option value="media">Media</option>
+                    <option value="alta">Alta</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Proceso:</label>
+                <select name="proceso" required>
+                    <option value="servicio">Servicio</option>
+                    <option value="mantenimiento">Mantenimiento</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Estado:</label>
+                <select name="estado" required>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="en_proceso">En Proceso</option>
+                    <option value="resuelto">Terminado</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-submit">Crear Ticket</button>
+        </form>
+        
+        <div class="btn-container">
+            <a href="#" onclick="history.back()" class="btn-dashboard">Volver</a>
         </div>
-
-        <div class="input-group">
-            <label>Prioridad:</label>
-            <select name="prioridad" required>
-                <option value="baja">Baja</option>
-                <option value="media">Media</option>
-                <option value="alta">Alta</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Proceso:</label>
-            <select name="proceso" required>
-                <option value="servicio">Servicio</option>
-                <option value="mantenimiento">Mantenimiento</option>
-                <option value="otro">Otro</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Estado:</label>
-            <select name="estado" required>
-                <option value="pendiente">Pendiente</option>
-                <option value="en_proceso">En Proceso</option>
-                <option value="resuelto">Terminado</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn-submit">Crear Ticket</button>
-    </form>
-
-    <!-- Botón de volver -->
-    <div class="back-container">
-        <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
     </div>
 </div>
 
-<!-- Estilos -->
 <style>
-    body {
-        background: linear-gradient(to right, #800020, #a52a2a);
-        font-family: Arial, sans-serif;
+    /* Fondo de la página */
+    .ticket-background {
+        background: linear-gradient(135deg, #800020, #4a667d);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
     }
 
+    /* Contenedor del formulario */
     .ticket-container {
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        width: 90%;
-        max-width: 550px;
-        margin: auto;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 95%;
+        max-width: 600px;
         text-align: center;
     }
 
+    /* Título elegante */
+    .ticket-title {
+        font-family: 'Georgia', serif;
+        font-size: 28px;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    /* Mensajes */
     .message-container {
-        text-align: center;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     .message {
-        padding: 10px;
+        padding: 8px;
         border-radius: 5px;
         font-weight: bold;
-        text-align: center;
-    }
-
-    .message.success {
         color: #155724;
         background-color: #d4edda;
         border: 1px solid #c3e6cb;
     }
 
-    .message.error {
-        color: #721c24;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-    }
-
-    .ticket-form {
+    /* Formulario */
+    .styled-form {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        gap: 12px;
+        width: 100%;
     }
 
     .input-group {
         text-align: left;
         width: 100%;
-        margin-bottom: 15px;
     }
 
+    /* Letras más elegantes */
     label {
         display: block;
         font-weight: bold;
         margin-bottom: 5px;
+        font-size: 14px;
+        color: #2c3e50;
+        font-family: 'Arial', sans-serif;
     }
 
     input, textarea, select {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        border: 1px solid #bbb;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+        transition: all 0.2s ease;
     }
 
+    input:focus, textarea:focus, select:focus {
+        border-color: #007BFF;
+        outline: none;
+        box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Botón principal */
     .btn-submit {
         background: #007BFF;
         color: white;
         padding: 12px;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
         width: 100%;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: bold;
-        transition: 0.3s;
+        font-family: 'Arial', sans-serif;
+        transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .btn-submit:hover {
         background: #0056b3;
+        transform: scale(1.03);
     }
 
-    .back-container {
+    /* Botón volver */
+    .btn-container {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 15px;
     }
 
     .btn-dashboard {
         display: inline-block;
-        padding: 10px 20px;
+        padding: 12px 20px;
         background: #28a745;
         color: white;
         text-decoration: none;
-        border-radius: 5px;
+        border-radius: 8px;
         font-weight: bold;
-        transition: 0.3s;
+        font-size: 15px;
+        font-family: 'Arial', sans-serif;
+        transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .btn-dashboard:hover {
         background: #218838;
+        transform: scale(1.03);
     }
 </style>
+
 {% endblock %}

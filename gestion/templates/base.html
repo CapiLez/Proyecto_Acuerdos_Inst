@@ -3,47 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Actividades</title>
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/estilos.css">
+    <title>Sistema de Acuerdos Institucionales</title>
     <style>
         body {
             display: flex;
-            font-family: Arial, sans-serif;
+            font-family: 'Merriweather', serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
         }
         .sidebar {
-            width: 250px;
-            background: #333;
+            width: 270px;
+            background: #1c1c1c;
             height: 100vh;
             padding-top: 20px;
             position: fixed;
             left: 0;
             top: 0;
-            color: white;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .sidebar h2 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #444;
+            margin-bottom: 20px;
         }
         .sidebar a {
             display: block;
-            color: white;
-            padding: 15px;
+            color: #c0c0c0;
+            padding: 15px 25px;
             text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background 0.3s, color 0.3s;
         }
         .sidebar a:hover {
-            background: #555;
+            background: #444;
+            color: #ffffff;
+        }
+        /* Estilo para el enlace activo */
+        .sidebar a.active {
+            background: #444;
+            color: #ffffff;
+            font-weight: bold;
         }
         .content-container {
-            margin-left: 260px;
-            padding: 20px;
+            margin-left: 290px;
+            padding: 30px;
             width: 100%;
+            background: #ffffff;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.2s;
+            display: inline-block;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
         }
         .btn-responder {
             background-color: #007BFF;
             color: white;
-            padding: 8px 15px;
-            text-decoration: none;
-            border-radius: 5px;
             border: none;
-            cursor: pointer;
-            font-size: 14px;
         }
         .btn-responder:hover {
             background-color: #0056b3;
@@ -51,14 +80,7 @@
         .btn-borrar-filtros {
             background-color: red;
             color: white;
-            padding: 10px 15px;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 10px;
-            text-decoration: none;
-            display: inline-block;
         }
         .btn-borrar-filtros:hover {
             background-color: darkred;
@@ -66,13 +88,7 @@
         .btn-filtrar {
             background-color: #28a745;
             color: white;
-            padding: 10px 15px;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            display: inline-block;
         }
         .btn-filtrar:hover {
             background-color: #218838;
@@ -81,12 +97,13 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2 style="text-align: center;">Menú</h2>
-        <a href="{% url 'dashboard' %}">Dashboard</a>
-        <a href="{% url 'crear_ticket' %}">Crear Ticket</a>
-        <a href="{% url 'generar_reportes' %}">Generar Reportes</a>
-        <a href="{% url 'filtrar_actividades' %}">Filtrar Actividades</a>
-        <a href="{% url 'tickets_respondidos' %}">Respondidos</a>
+        <h2>Menú</h2>
+        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+        <a href="{% url 'crear_ticket' %}" class="{% if request.resolver_match.url_name == 'crear_ticket' %}active{% endif %}">Crear Ticket</a>
+        <a href="{% url 'generar_reportes' %}" class="{% if request.resolver_match.url_name == 'generar_reportes' %}active{% endif %}">Generar Reportes</a>
+        <a href="{% url 'filtrar_actividades' %}" class="{% if request.resolver_match.url_name == 'filtrar_actividades' %}active{% endif %}">Filtrar Actividades</a>
+        <a href="{% url 'tickets_respondidos' %}" class="{% if request.resolver_match.url_name == 'tickets_respondidos' %}active{% endif %}">Tickets Respondidos</a>
+        
         <a href="{% url 'logout' %}">Cerrar Sesión</a>
     </div>
 
