@@ -26,7 +26,7 @@ class Usuario(AbstractUser):
 class Ticket(models.Model):
     ESTADOS = [
         ('pendiente', 'Pendiente'),
-        ('en_progreso', 'En Progreso'),
+        ('en_progreso', 'En Proceso'),
         ('completado', 'Completado'),
         ('cancelado', 'Cancelado'),
     ]
