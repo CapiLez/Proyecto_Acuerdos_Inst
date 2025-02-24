@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -300,3 +301,14 @@ def eliminar_ticket_view(request, ticket_id):
         return redirect("gestionar_tickets")  # Redirige a la página de gestión de tickets
 
     return render(request, "pages/eliminar_ticket.html", {"ticket": ticket})
+
+@login_required
+def obtener_tickets_por_direccion_view(request):
+    direccion = request.GET.get('direccion')
+    # Filtrar tickets para la dirección dada y calcular los totales según el estado.
+    data = {
+        "pendiente": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado="pendiente").count(),
+        "en_proceso": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado="en_progreso").count(),
+        "completado": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado="completado").count(),
+    }
+    return JsonResponse(data)

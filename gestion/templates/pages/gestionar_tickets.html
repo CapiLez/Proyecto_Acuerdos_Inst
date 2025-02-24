@@ -13,7 +13,6 @@
             </div>
         {% endif %}
 
-
         {% if tickets %}
             <div class="table-container">
                 <table class="styled-table">
@@ -48,8 +47,10 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'editar_ticket' ticket.id %}" class="btn-editar">Editar</a>
-                                <a href="{% url 'eliminar_ticket' ticket.id %}" class="btn-eliminar">Eliminar</a>
+                                <div class="actions-container">
+                                    <a href="{% url 'editar_ticket' ticket.id %}" class="btn-editar">Editar</a>
+                                    <a href="{% url 'eliminar_ticket' ticket.id %}" class="btn-eliminar">Eliminar</a>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -109,20 +110,19 @@
         font-family: 'Arial', sans-serif;
     }
     
+    .btn-editar, .btn-eliminar {
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        padding: 8px 12px;
+    }
+    
     .btn-editar {
         background: #007BFF;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        text-decoration: none;
     }
     
     .btn-eliminar {
         background: #dc3545;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        text-decoration: none;
     }
     
     .btn-volver {
@@ -137,11 +137,11 @@
     }
 
     .message-container {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
     }
 
     .alert {
@@ -185,6 +185,16 @@
         border-left: 6px solid #17a2b8;
     }
 
+    /* Nuevo estilo para el contenedor de acciones */
+    .actions-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .actions-container a {
+        flex: 1;
+        text-align: center;
+    }
 </style>
 
 {% endblock %}

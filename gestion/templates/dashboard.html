@@ -3,8 +3,8 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Bienvenido, {{ request.user.username }}</h2>
-
-    <div class="row justify-content-center">
+    <div class="row">
+        <!-- Columna de Tarjetas de Resumen -->
         <div class="col-md-6">
             <div class="card text-white bg-primary mb-3">
                 <div class="card-header">Total de Tickets</div>
@@ -31,9 +31,19 @@
                 </div>
             </div>
         </div>
+        <!-- Columna de Gráfica -->
+        <div class="col-md-6">
+            <h4 class="text-center" id="chartTitle">Tickets por Estado - Global</h4>
+            <div class="chart-container">
+                <canvas id="ticketsChart"></canvas>
+            </div>
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary" onclick="loadGlobalData()">Mostrar Global</button>
+            </div>
+        </div>
     </div>
-
-    <!-- Mostrar tickets por dirección -->
+    
+    <!-- Tabla de Tickets por Dirección -->
     <div class="row justify-content-center mt-5">
         <div class="col-md-8">
             <h4 class="text-center">Tickets por Dirección</h4>
@@ -47,7 +57,11 @@
                 <tbody>
                     {% for direccion, cantidad in direcciones_tickets.items %}
                     <tr>
-                        <td>{{ direccion }}</td>
+                        <td>
+                            <a href="#" onclick="loadDireccionData('{{ direccion }}'); return false;">
+                                {{ direccion }}
+                            </a>
+                        </td>
                         <td>{{ cantidad }}</td>
                     </tr>
                     {% endfor %}
@@ -63,25 +77,90 @@
         border-collapse: collapse;
         margin-top: 20px;
     }
-
     .styled-table th, .styled-table td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;
     }
-
     .styled-table th {
         background-color: #2c3e50;
         color: white;
     }
-
     .styled-table tr:nth-child(even) {
         background-color: #f2f2f2;
     }
-
     .styled-table tr:hover {
         background-color: #ddd;
     }
+    /* Contenedor responsivo para la gráfica */
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: 50vh; /* Ajusta la altura según tus necesidades */
+    }
 </style>
 
+<!-- Incluir Chart.js desde CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Convertir los valores a números
+    var globalData = {
+        pendiente: parseInt('{{ tickets_pendientes|default:"0" }}', 10),
+        en_proceso: parseInt('{{ tickets_en_proceso|default:"0" }}', 10),
+        completado: parseInt('{{ tickets_completados|default:"0" }}', 10)
+    };
+
+    var ctx = document.getElementById('ticketsChart').getContext('2d');
+    var ticketsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Pendiente', 'En Proceso', 'Completado'],
+            datasets: [{
+                label: 'Tickets por Estado',
+                data: [globalData.pendiente, globalData.en_proceso, globalData.completado],
+                backgroundColor: [
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(23, 162, 184, 0.7)',
+                    'rgba(40, 167, 69, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(23, 162, 184, 1)',
+                    'rgba(40, 167, 69, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    window.updateChart = function(data) {
+        ticketsChart.data.datasets[0].data = [data.pendiente, data.en_proceso, data.completado];
+        ticketsChart.update();
+    };
+
+    window.loadGlobalData = function() {
+        document.getElementById("chartTitle").innerText = "Tickets por Estado - Global";
+        updateChart(globalData);
+    };
+
+    window.loadDireccionData = function(direccion) {
+        document.getElementById("chartTitle").innerText = "Tickets por Estado - " + direccion;
+        fetch("{% url 'obtener_tickets_por_direccion' %}?direccion=" + encodeURIComponent(direccion))
+            .then(response => response.json())
+            .then(data => {
+                // Se espera que 'data' tenga la estructura: { pendiente: X, en_proceso: Y, completado: Z }
+                updateChart(data);
+            })
+            .catch(error => {
+                console.error("Error al obtener datos por dirección:", error);
+                alert("No se pudieron cargar los datos para la dirección: " + direccion);
+            });
+    };
+});
+</script>
 {% endblock %}
