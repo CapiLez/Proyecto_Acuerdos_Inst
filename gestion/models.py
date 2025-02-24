@@ -4,24 +4,36 @@ from django.db import models
 
 class Usuario(AbstractUser):
     ROLES = [
+        ('administrador', 'Administrador'),
         ('director', 'Director'),
         ('subdirector', 'Subdirector'),
         ('jefe_departamento', 'Jefe de Departamento'),
         ('coordinador', 'Coordinador'),
         ('usuario', 'Usuario'),
-        ('administrador', 'Administrador'),
     ]
-    
-    rol = models.CharField(max_length=20, choices=ROLES, default='usuario')
 
-    # Evitar conflictos con el modelo base de Django
-    groups = models.ManyToManyField("auth.Group", related_name="usuario_groups", blank=True)
-    user_permissions = models.ManyToManyField("auth.Permission", related_name="usuario_permissions", blank=True)
+    DIRECCIONES = [
+        ('coordinacion_general', 'Coordinación General'),
+        ('secretaria_tecnica', 'Secretaria Técnica y Seguimiento Institucional'),
+        ('admin_finanzas', 'Unidad de Administración y Finanzas'),
+        ('juridico', 'Unidad de Apoyo Jurídico'),
+        ('control_interno', 'Órgano Interno de Control'),
+        ('transparencia', 'Unidad de Transparencia'),
+        ('informatica', 'Unidad de Apoyo Técnico e Informático'),
+        ('voluntariado', 'Dirección de Voluntariado y Vinculación Institucional con Sociedad Civil'),
+        ('alimentarios', 'Dirección de Servicios Alimentarios y Desarrollo Comunitario'),
+        ('orientacion_familiar', 'Dirección de Orientación Familiar y Asistencia Social'),
+        ('rehabilitacion', 'Dirección de Rehabilitación e Inclusión'),
+        ('centros_asistenciales', 'Dirección de Centros Asistenciales'),
+        ('proteccion_nna', 'Secretaria Ejecutiva del Sistema Estatal de Protección de los Derechos de Niñas, Niños y Adolescentes'),
+        ('procuraduria_familia', 'Procuraduría Estatal de Protección de la Familia y de los Derechos de las Niñas, Niños y Adolescentes'),
+    ]
+
+    rol = models.CharField(max_length=20, choices=ROLES, default='usuario')
+    direccion = models.CharField(max_length=50, choices=DIRECCIONES, default='coordinacion_general')
 
     def __str__(self):
-        return f"{self.username} ({self.get_rol_display()})"
-
-
+        return f"{self.username} ({self.get_rol_display()}) - {self.get_direccion_display()}"
 
 class Ticket(models.Model):
     ESTADOS = [

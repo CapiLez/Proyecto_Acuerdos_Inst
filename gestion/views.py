@@ -31,22 +31,27 @@ def login_view(request):
 @login_required
 def dashboard_view(request):
     usuario_actual = request.user
-    
-    # Filtrar tickets asignados al usuario actual
+
+    # Contar tickets según el estado
     total_tickets = Ticket.objects.filter(usuario_asignado=usuario_actual).count()
     tickets_pendientes = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="pendiente").count()
     tickets_en_proceso = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="en_progreso").count()
-    tickets_completados = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="completado").count()  # <-- Asegurar esta línea
+    tickets_completados = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="completado").count()
+
+    # Obtener conteo de tickets por dirección
+    direcciones_tickets = {}
+    for direccion_key, direccion_nombre in Usuario.DIRECCIONES:
+        direcciones_tickets[direccion_nombre] = Ticket.objects.filter(usuario_asignado__direccion=direccion_key).count()
 
     context = {
         "total_tickets": total_tickets,
         "tickets_pendientes": tickets_pendientes,
         "tickets_en_proceso": tickets_en_proceso,
-        "tickets_completados": tickets_completados,  # <-- Asegurar que esta variable existe
+        "tickets_completados": tickets_completados,
+        "direcciones_tickets": direcciones_tickets,
     }
 
     return render(request, "dashboard.html", context)
-
 
 
 @login_required
@@ -134,43 +139,28 @@ from datetime import datetime
 def filtrar_actividades_view(request):
     usuario_actual = request.user
 
-    # Solo el Administrador y el Coordinador pueden ver todas las actividades
-    if usuario_actual.rol in ["administrador", "coordinador"]:
+    # Filtrar tickets según el usuario o el rol de administrador
+    if usuario_actual.rol == "administrador":
         tickets = Ticket.objects.all()
     else:
         tickets = Ticket.objects.filter(usuario_asignado=usuario_actual)
 
-    # Obtener filtros de la solicitud GET
     usuario_asignado = request.GET.get("usuario_asignado", "")
-    usuario_creador = request.GET.get("usuario_creador", "")
+    direccion = request.GET.get("direccion", "")
     estado = request.GET.get("estado", "")
     prioridad = request.GET.get("prioridad", "")
-    fecha_inicio = request.GET.get("fecha_inicio", "")
-    fecha_fin = request.GET.get("fecha_fin", "")
 
-    # Aplicar filtros
     if usuario_asignado:
         tickets = tickets.filter(usuario_asignado_id=usuario_asignado)
-    if usuario_creador:
-        tickets = tickets.filter(usuario_creador_id=usuario_creador)
+    if direccion:
+        tickets = tickets.filter(usuario_asignado__direccion=direccion)
     if estado:
         tickets = tickets.filter(estado=estado)
     if prioridad:
         tickets = tickets.filter(prioridad=prioridad)
-    
-    # Convertir fechas a formato con zona horaria
-    if fecha_inicio and fecha_fin:
-        try:
-            fecha_inicio = timezone.make_aware(datetime.strptime(fecha_inicio, "%Y-%m-%d"))
-            fecha_fin = timezone.make_aware(datetime.strptime(fecha_fin, "%Y-%m-%d"))
-            tickets = tickets.filter(fecha_creacion__range=[fecha_inicio, fecha_fin])
-        except ValueError:
-            messages.error(request, "Formato de fecha inválido.")
 
     usuarios = Usuario.objects.all()
-    
     return render(request, "pages/filtrar_actividades.html", {"tickets": tickets, "usuarios": usuarios})
-
 
 
 @login_required
@@ -183,33 +173,65 @@ def tickets_respondidos_view(request):
 
 @login_required
 def gestionar_usuario_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        rol = request.POST.get("rol")
+        direccion = request.POST.get("direccion")
+
+        if Usuario.objects.filter(username=username).exists():
+            messages.error(request, "El usuario ya existe.")
+        else:
+            usuario = Usuario.objects.create(username=username, email=email, rol=rol, direccion=direccion)
+            usuario.set_password(password)  # Encriptar la contraseña
+            usuario.save()
+            messages.success(request, "Usuario creado correctamente.")
+
     usuarios = Usuario.objects.all()
 
+    # Enviar los roles y direcciones al template
+    context = {
+        "usuarios": usuarios,
+        "roles": Usuario.ROLES,
+        "direcciones": Usuario.DIRECCIONES
+    }
+    
+    return render(request, "pages/gestionar_usuario.html", context)
+
+
+@login_required
+def editar_usuario_view(request):
     if request.method == "POST":
-        nombre_usuario = request.POST.get("username").strip()
-        email = request.POST.get("email").strip()
-        contraseña = request.POST.get("password")
+        user_id = request.POST.get("user_id")
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
         rol = request.POST.get("rol")
+        direccion = request.POST.get("direccion")
 
-        if not nombre_usuario or not email or not contraseña or not rol:
-            messages.error(request, "Todos los campos son obligatorios.")
+        usuario = get_object_or_404(Usuario, id=user_id)
+
+        cambios_realizados = False
+        if email and usuario.email != email:
+            usuario.email = email
+            cambios_realizados = True
+        if password:
+            usuario.set_password(password)
+            cambios_realizados = True
+        if rol and usuario.rol != rol:
+            usuario.rol = rol
+            cambios_realizados = True
+        if direccion and usuario.direccion != direccion:
+            usuario.direccion = direccion
+            cambios_realizados = True
+
+        if cambios_realizados:
+            usuario.save()
+            messages.success(request, f"El usuario {usuario.username} ha sido actualizado correctamente.")
         else:
-            # Verificar si el usuario ya existe
-            if Usuario.objects.filter(username=nombre_usuario).exists():
-                messages.error(request, "El usuario ya existe.")
-            else:
-                # Crear usuario
-                usuario = Usuario.objects.create(
-                    username=nombre_usuario,
-                    email=email,
-                    password=make_password(contraseña),  # Encriptar contraseña
-                    rol=rol
-                )
-                messages.success(request, f"Usuario {usuario.username} creado con éxito.")
-                return redirect("gestionar_usuario")  # Recargar la página
+            messages.info(request, "No se realizaron cambios.")
 
-    return render(request, "pages/gestionar_usuario.html", {"usuarios": usuarios})
-
+    return redirect("gestionar_usuario")
 
 @login_required
 def gestionar_tickets_view(request):
@@ -234,28 +256,6 @@ def gestionar_tickets_view(request):
             messages.success(request, "El ticket fue eliminado correctamente.")
 
     return render(request, "pages/gestionar_tickets.html", {"tickets": tickets})
-
-@login_required
-def editar_usuario_view(request):
-    if request.method == "POST":
-        user_id = request.POST.get("user_id")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        rol = request.POST.get("rol")
-
-        usuario = get_object_or_404(Usuario, id=user_id)
-
-        if email:
-            usuario.email = email
-        if password:
-            usuario.set_password(password)
-        if rol:
-            usuario.rol = rol
-
-        usuario.save()
-        messages.success(request, f"El usuario {usuario.username} ha sido actualizado correctamente.")
-
-    return redirect("gestionar_usuario")
 
 @login_required
 def eliminar_usuario_view(request, user_id):
