@@ -31,18 +31,20 @@ def login_view(request):
 
 @login_required
 def dashboard_view(request):
-    usuario_actual = request.user
+    total_tickets = Ticket.objects.all().count()
+    tickets_pendientes = Ticket.objects.filter(estado__iexact="pendiente").count()
+    # Permite "en_proceso" o "en proceso"
+    tickets_en_proceso = Ticket.objects.filter(Q(estado__iexact="en_proceso") | Q(estado__iexact="en proceso")).count()
+    tickets_completados = Ticket.objects.filter(estado__iexact="completado").count()
 
-    # Contar tickets según el estado
-    total_tickets = Ticket.objects.filter(usuario_asignado=usuario_actual).count()
-    tickets_pendientes = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="pendiente").count()
-    tickets_en_proceso = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="en_progreso").count()
-    tickets_completados = Ticket.objects.filter(usuario_asignado=usuario_actual, estado="completado").count()
-
-    # Obtener conteo de tickets por dirección
-    direcciones_tickets = {}
+    direcciones_tickets = []
     for direccion_key, direccion_nombre in Usuario.DIRECCIONES:
-        direcciones_tickets[direccion_nombre] = Ticket.objects.filter(usuario_asignado__direccion=direccion_key).count()
+        cantidad = Ticket.objects.filter(usuario_asignado__direccion=direccion_key).count()
+        direcciones_tickets.append({
+            'key': direccion_key,
+            'nombre': direccion_nombre,
+            'cantidad': cantidad
+        })
 
     context = {
         "total_tickets": total_tickets,
@@ -51,7 +53,7 @@ def dashboard_view(request):
         "tickets_completados": tickets_completados,
         "direcciones_tickets": direcciones_tickets,
     }
-
+    
     return render(request, "dashboard.html", context)
 
 
@@ -305,10 +307,11 @@ def eliminar_ticket_view(request, ticket_id):
 @login_required
 def obtener_tickets_por_direccion_view(request):
     direccion = request.GET.get('direccion')
-    # Filtrar tickets para la dirección dada y calcular los totales según el estado.
     data = {
-        "pendiente": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado="pendiente").count(),
-        "en_proceso": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado="en_progreso").count(),
-        "completado": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado="completado").count(),
+        "pendiente": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado__iexact="pendiente").count(),
+        "en_proceso": Ticket.objects.filter(usuario_asignado__direccion=direccion).filter(
+                           Q(estado__iexact="en_proceso") | Q(estado__iexact="en proceso")
+                       ).count(),
+        "completado": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado__iexact="completado").count(),
     }
     return JsonResponse(data)

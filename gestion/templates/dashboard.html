@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <h2 class="text-center">Bienvenido, {{ request.user.username }}</h2>
     <div class="row">
-        <!-- Columna de Tarjetas de Resumen -->
+        <!-- Tarjetas de Resumen -->
         <div class="col-md-6">
             <div class="card text-white bg-primary mb-3">
                 <div class="card-header">Total de Tickets</div>
@@ -55,14 +55,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for direccion, cantidad in direcciones_tickets.items %}
+                    {% for direccion in direcciones_tickets %}
                     <tr>
                         <td>
-                            <a href="#" onclick="loadDireccionData('{{ direccion }}'); return false;">
-                                {{ direccion }}
+                            <a href="#" onclick="loadDireccionData('{{ direccion.key }}', '{{ direccion.nombre }}'); return false;">
+                                {{ direccion.nombre }}
                             </a>
                         </td>
-                        <td>{{ cantidad }}</td>
+                        <td>{{ direccion.cantidad }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -104,7 +104,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Convertir los valores a números
+    // Convertir los valores globales a números
     var globalData = {
         pendiente: parseInt('{{ tickets_pendientes|default:"0" }}', 10),
         en_proceso: parseInt('{{ tickets_en_proceso|default:"0" }}', 10),
@@ -148,9 +148,10 @@ document.addEventListener("DOMContentLoaded", function() {
         updateChart(globalData);
     };
 
-    window.loadDireccionData = function(direccion) {
-        document.getElementById("chartTitle").innerText = "Tickets por Estado - " + direccion;
-        fetch("{% url 'obtener_tickets_por_direccion' %}?direccion=" + encodeURIComponent(direccion))
+    // Ahora la función recibe también el nombre amigable de la dirección
+    window.loadDireccionData = function(direccionKey, direccionNombre) {
+        document.getElementById("chartTitle").innerText = "Tickets por Estado - " + direccionNombre;
+        fetch("{% url 'obtener_tickets_por_direccion' %}?direccion=" + encodeURIComponent(direccionKey))
             .then(response => response.json())
             .then(data => {
                 // Se espera que 'data' tenga la estructura: { pendiente: X, en_proceso: Y, completado: Z }
@@ -158,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => {
                 console.error("Error al obtener datos por dirección:", error);
-                alert("No se pudieron cargar los datos para la dirección: " + direccion);
+                alert("No se pudieron cargar los datos para la dirección: " + direccionNombre);
             });
     };
 });

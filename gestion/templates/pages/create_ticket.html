@@ -64,7 +64,7 @@
                 <select name="estado" required>
                     <option value="pendiente">Pendiente</option>
                     <option value="en_proceso">En Proceso</option>
-                    <option value="resuelto">Terminado</option>
+                    <option value="completado">Terminado</option>
                 </select>
             </div>
             
@@ -72,8 +72,8 @@
         </form>
         
         <div class="btn-container">
-            <a href="#" onclick="history.back()" class="btn-dashboard">Volver</a>
-        </div>
+            <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
+        </div>        
     </div>
 </div>
 
