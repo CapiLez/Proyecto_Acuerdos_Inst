@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import editar_ticket_view, eliminar_ticket_view, gestionar_tickets_view, gestionar_usuario_view, editar_usuario_view, eliminar_usuario_view
+from .views import autocompletar_direcciones, autocompletar_usuarios, editar_ticket_view, eliminar_ticket_view, gestionar_tickets_view, gestionar_usuario_view, editar_usuario_view, eliminar_usuario_view
 
 urlpatterns = [
     path("", views.login_view, name="login"),
@@ -20,7 +20,7 @@ urlpatterns = [
     path("editar-ticket/<int:ticket_id>/", editar_ticket_view, name="editar_ticket"),
     path("eliminar-ticket/<int:ticket_id>/", eliminar_ticket_view, name="eliminar_ticket"),
     path('obtener_tickets_por_direccion/', views.obtener_tickets_por_direccion_view, name='obtener_tickets_por_direccion'),
+    path("autocompletar_direcciones/", autocompletar_direcciones, name="autocompletar_direcciones"),
+    path("autocompletar_usuarios/", autocompletar_usuarios, name="autocompletar_usuarios"),
 
 ]
-
-

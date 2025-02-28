@@ -327,3 +327,20 @@ def obtener_tickets_global(request):
         "completado": tickets_completados,
     }
     return JsonResponse(data)
+
+@login_required
+def autocompletar_direcciones(request):
+    if 'term' in request.GET:
+        term = request.GET.get('term', '').lower()
+        direcciones = [nombre for _, nombre in Usuario.DIRECCIONES if term in nombre.lower()]
+        return JsonResponse(direcciones, safe=False)  # Devuelve la lista en formato JSON
+    return JsonResponse([], safe=False)
+
+@login_required
+def autocompletar_usuarios(request):
+    if 'term' in request.GET:
+        term = request.GET.get('term', '').lower()
+        usuarios = Usuario.objects.filter(username__icontains=term)[:10]  # Limitar a 10 resultados
+        usuarios_nombres = list(usuarios.values_list('username', flat=True))
+        return JsonResponse(usuarios_nombres, safe=False)
+    return JsonResponse([], safe=False)

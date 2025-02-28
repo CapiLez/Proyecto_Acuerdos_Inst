@@ -8,26 +8,35 @@
         <!-- Formulario de filtros -->
         <form method="GET" action="">
             <label>Usuario Asignado:</label>
-            <select name="usuario_asignado">
-                <option value="">Todos</option>
-                {% for usuario in usuarios %}
-                    <option value="{{ usuario.id }}" {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>
-                        {{ usuario.username }} - {{ usuario.get_direccion_display }}
-                    </option>
-                {% endfor %}
-            </select>
-        
+            <input type="text" id="usuario-search" name="usuario_asignado" placeholder="Escribe un usuario..." value="{{ request.GET.usuario_asignado }}">
+
             <label>Dirección:</label>
-            <select name="direccion">
-                <option value="">Todas</option>
-                {% for direccion_value, direccion_name in usuario.DIRECCIONES %}
-                    <option value="{{ direccion_value }}" {% if request.GET.direccion == direccion_value %}selected{% endif %}>{{ direccion_name }}</option>
-                {% endfor %}
-            </select>
-        
+            <input type="text" id="direccion-search" name="direccion" placeholder="Escribe una dirección..." value="{{ request.GET.direccion }}">
+
             <button type="submit" class="btn-filtrar">Filtrar</button>
         </form>
-        
+
+        <!-- Agregar jQuery y jQuery UI desde CDN -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <!-- Script para activar el autocompletado en Usuario y Dirección -->
+        <script>
+            $(document).ready(function() {
+                $("#usuario-search").autocomplete({
+                    source: "/gestion/autocompletar_usuarios/",
+                    minLength: 2
+                });
+
+                $("#direccion-search").autocomplete({
+                    source: "/gestion/autocompletar_direcciones/",
+                    minLength: 2
+                });
+            });
+        </script>
+
+
         <!-- Tabla de resultados -->
         {% if tickets %}
             <div class="table-container">
