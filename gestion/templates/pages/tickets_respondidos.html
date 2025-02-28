@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Tickets Respondidos</h2>
+
+        {% if tickets_respondidos %}
+            <div class="table-container">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Usuario Asignado</th>
+                            <th>Estado</th>
+                            <th>Respuestas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets_respondidos %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.titulo }}</td>
+                            <td>
+                                {% if ticket.usuario_asignado %}
+                                    {{ ticket.usuario_asignado.username }}
+                                {% else %}
+                                    No asignado
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.estado }}</td>
+                            <td>
+                                {% if ticket.respuestas.all %}
+                                    <div class="respuestas-container">
+                                        {% for respuesta in ticket.respuestas.all %}
+                                            <div class="respuesta-card">
+                                                <p>
+                                                    <strong>{{ respuesta.usuario.username }}</strong> 
+                                                    - <span class="fecha">{{ respuesta.fecha_respuesta }}</span>
+                                                </p>
+                                                <p class="mensaje">"{{ respuesta.mensaje }}"</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p style="text-align: center; color: gray;">Sin respuestas</p>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-tickets">No hay tickets respondidos.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

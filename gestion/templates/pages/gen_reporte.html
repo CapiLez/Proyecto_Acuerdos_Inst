@@ -1,46 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 style="text-align: center;">Reporte de Tickets Asignados</h2>
+<div class="report-background">
+    <div class="report-container">
+        <h2 class="report-title">Reporte de Tickets Asignados</h2>
 
-<div style="text-align: center; margin-bottom: 20px;">
-    <form method="GET" action="">
-        <input type="text" name="search" value="{{ search_query }}" placeholder="Buscar usuario..." style="padding: 10px; width: 30%; border-radius: 5px; border: 1px solid #ccc;">
-        <button type="submit" style="padding: 10px; margin-left: 10px; border-radius: 5px; background-color: #007BFF; color: white; border: none; cursor: pointer;">Buscar</button>
-    </form>
-</div>
+        <form method="GET" action="" class="search-form">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Buscar usuario...">
+            <button type="submit">Buscar</button>
+        </form>
 
-{% if reportes %}
-    <div style="display: flex; justify-content: center;">
-        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 50%;">
-            <tr>
-                <th>Usuario</th>
-                <th>Títulos de Tickets</th>
-                <th>Estado</th>
-                <th>Total de Tickets</th>
-            </tr>
-            {% for usuario, tickets in reportes.items %}
-            {% for ticket in tickets %}
-            <tr>
-                {% if forloop.first %}
-                <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
-                {% endif %}
-                <td>{{ ticket.titulo }}</td>
-                <td>{{ ticket.estado }}</td>
-                {% if forloop.first %}
-                <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-            {% endfor %}
-        </table>
+        {% if reportes %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Títulos de Tickets</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario, tickets in reportes.items %}
+                        {% for ticket in tickets %}
+                        <tr>
+                            {% if forloop.first %}
+                            <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
+                            {% endif %}
+                            <td>{{ ticket.titulo }}</td>
+                            <td><span class="status {{ ticket.estado|lower }}">{{ ticket.estado }}</span></td>
+                            {% if forloop.first %}
+                            <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-tickets">No hay tickets asignados.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>
+        </div>
     </div>
-{% else %}
-    <p style="text-align: center;">No hay tickets asignados.</p>
-{% endif %}
-
-<div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
 </div>
-
+    
 {% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Panel del Administrador</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item"><a href="{% url 'crear_ticket' %}"><i class="fas fa-plus-circle"></i> Crear Ticket</a></li>
+                <li class="list-group-item"><a href="{% url 'filtrar_actividades' %}"><i class="fas fa-filter"></i> Filtrar Actividades</a></li>
+                <li class="list-group-item"><a href="{% url 'generar_reportes' %}"><i class="fas fa-file-alt"></i> Generar Reportes</a></li>
+                <li class="list-group-item"><a href="{% url 'tickets_respondidos' %}"><i class="fas fa-comments"></i> Tickets Respondidos</a></li>
+                <li class="list-group-item"><a href="{% url 'gestionar_usuario' %}"><i class="fas fa-user-cog"></i> Gestionar Usuarios</a></li>
+                <li class="list-group-item"><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        max-width: 600px;
+        text-align: center;
+        margin-top: 50px;
+    }
+
+    .list-group-item {
+        font-size: 18px;
+        font-weight: bold;
+        padding: 12px 20px;
+        transition: background 0.3s ease;
+    }
+
+    .list-group-item a {
+        text-decoration: none;
+        color: #333;
+        display: flex;
+        align-items: center;
+    }
+
+    .list-group-item a i {
+        margin-right: 10px;
+        color: #007BFF;
+    }
+
+    .list-group-item:hover {
+        background: #f1f1f1;
+    }
+</style>
+
+{% endblock %}

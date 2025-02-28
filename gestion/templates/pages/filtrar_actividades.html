@@ -1,92 +1,80 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 style="text-align: center;">Filtrar Actividades</h2>
+<div class="filter-background">
+    <div class="filter-container">
+        <h2 class="filter-title">Filtrar Actividades</h2>
 
-<div style="text-align: center; margin-bottom: 20px;">
-    <form method="GET" action="" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;">
-        <label>Usuario Asignado:</label>
-        <select name="usuario_asignado">
-            <option value="">Todos</option>
-            {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}" {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
-            {% endfor %}
-        </select>
+        <!-- Formulario de filtros -->
+        <form method="GET" action="">
+            <label>Usuario Asignado:</label>
+            <select name="usuario_asignado">
+                <option value="">Todos</option>
+                {% for usuario in usuarios %}
+                    <option value="{{ usuario.id }}" {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>
+                        {{ usuario.username }} - {{ usuario.get_direccion_display }}
+                    </option>
+                {% endfor %}
+            </select>
         
-        <label>Usuario Creador:</label>
-        <select name="usuario_creador">
-            <option value="">Todos</option>
-            {% for usuario in usuarios %}
-                <option value="{{ usuario.id }}" {% if request.GET.usuario_creador == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
-            {% endfor %}
-        </select>
+            <label>Dirección:</label>
+            <select name="direccion">
+                <option value="">Todas</option>
+                {% for direccion_value, direccion_name in usuario.DIRECCIONES %}
+                    <option value="{{ direccion_value }}" {% if request.GET.direccion == direccion_value %}selected{% endif %}>{{ direccion_name }}</option>
+                {% endfor %}
+            </select>
         
-        <label>Estado:</label>
-        <select name="estado">
-            <option value="">Todos</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="en_proceso">En Proceso</option>
-            <option value="resuelto">Terminado</option>
-        </select>
+            <button type="submit" class="btn-filtrar">Filtrar</button>
+        </form>
         
-        <label>Prioridad:</label>
-        <select name="prioridad">
-            <option value="">Todas</option>
-            <option value="baja">Baja</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
-        </select>
-        
-        <label>Fecha de Creación:</label>
-        <input type="date" name="fecha_inicio"> a <input type="date" name="fecha_fin">
-        
-        <button type="submit" class="btn-filtrar">Filtrar</button>
-        <a href="{% url 'filtrar_actividades' %}" class="btn-borrar-filtros">Borrar Filtros</a>
-    </form>
-</div>
+        <!-- Tabla de resultados -->
+        {% if tickets %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Usuario Asignado</th>
+                            <th>Usuario Creador</th>
+                            <th>Fecha Creación</th>
+                            <th>Última Actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.titulo }}</td>
+                            <td>{{ ticket.estado }}</td>
+                            <td>{{ ticket.prioridad|default:"Sin prioridad" }}</td>
+                            <td>{{ ticket.usuario_asignado.username|default:"No asignado" }}</td>
+                            <td>{{ ticket.usuario_creador.username }}</td>
+                            <td>{{ ticket.fecha_creacion }}</td>
+                            <td>{{ ticket.fecha_actualizacion }}</td>
+                            <td>
+                                {% if ticket.usuario_asignado and ticket.usuario_asignado == request.user %}
+                                    <a href="{% url 'responder_ticket' ticket.id %}" class="btn-responder">Responder</a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-activities">No hay actividades que coincidan con los filtros seleccionados.</p>
+        {% endif %}
 
-{% if tickets %}
-    <div style="display: flex; justify-content: center;">
-        <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; text-align: center; width: 80%; max-width: 1200px;">
-            <tr>
-                <th>ID</th>
-                <th>Título</th>
-                <th>Estado</th>
-                <th>Prioridad</th>
-                <th>Usuario Asignado</th>
-                <th>Usuario Creador</th>
-                <th>Fecha Creación</th>
-                <th>Última Actualización</th>
-                <th>Acciones</th>
-            </tr>
-            {% for ticket in tickets %}
-            <tr>
-                <td>{{ ticket.id }}</td>
-                <td>{{ ticket.titulo }}</td>
-                <td>{{ ticket.estado }}</td>
-                <td>{% if ticket.prioridad %}{{ ticket.prioridad }}{% else %}Sin prioridad{% endif %}</td>
-                <td>{% if ticket.usuario_asignado %}{{ ticket.usuario_asignado.username }}{% else %}No asignado{% endif %}</td>
-                <td>{{ ticket.usuario_creador.username }}</td>
-                <td>{{ ticket.fecha_creacion }}</td>
-                <td>{{ ticket.fecha_actualizacion }}</td>
-                <td>
-                    {% if ticket.usuario_asignado and ticket.usuario_asignado == request.user %}
-                        <a href="{% url 'responder_ticket' ticket.id %}" class="btn-responder">Responder</a>
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
+        </div>
     </div>
-{% else %}
-    <p style="text-align: center;">No hay actividades que coincidan con los filtros seleccionados.</p>
-{% endif %}
-
-<div style="text-align: center; margin-top: 20px;">
-    <a href="{% url 'dashboard' %}" class="btn-volver" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver al Dashboard</a>
 </div>
-
 {% endblock %}
-

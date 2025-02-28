@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Eliminar Ticket</h2>
+        <p>¿Estás seguro de que deseas eliminar el ticket <strong>{{ ticket.titulo }}</strong>?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn-eliminar">Sí, eliminar</button>
+            <a href="{% url 'gestionar_tickets' %}" class="btn-cancelar">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

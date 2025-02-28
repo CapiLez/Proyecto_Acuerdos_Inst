@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Gestión de Usuarios</h2>
+
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <p class="message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <script>
+            function showTab(tabId) {
+                // Remover la clase "active" de todas las pestañas y botones
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+                // Agregar la clase "active" a la pestaña seleccionada y al botón correspondiente
+                document.getElementById(tabId).classList.add('active');
+                event.currentTarget.classList.add('active');  // Agregar clase al botón que se hizo clic
+            }
+        </script>
+        
+
+        <!-- Pestañas para cambiar entre "Crear Usuario" y "Editar Usuario" -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="showTab('crear')">Crear Usuario</button>
+            <button class="tab-btn" onclick="showTab('editar')">Editar Usuario</button>
+        </div>
+
+        <!-- FORMULARIO PARA CREAR USUARIO -->
+        <div id="crear" class="tab-content active">
+            <form method="POST" action="{% url 'gestionar_usuario' %}" class="user-form">
+                {% csrf_token %}
+                
+                <div class="input-group">
+                    <label>Nombre de Usuario:</label>
+                    <input type="text" name="username" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Email:</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Contraseña:</label>
+                    <input type="password" name="password" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Rol:</label>
+                    <select name="rol" required>
+                        {% for rol_value, rol_name in roles %}
+                            <option value="{{ rol_value }}">{{ rol_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Dirección:</label>
+                    <select name="direccion" required>
+                        {% for direccion_value, direccion_name in direcciones %}
+                            <option value="{{ direccion_value }}">{{ direccion_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Crear Usuario</button>
+            </form>
+        </div>
+
+        <!-- FORMULARIO PARA EDITAR USUARIO -->
+        <div id="editar" class="tab-content">
+            <form method="POST" action="{% url 'editar_usuario' %}" class="user-form">
+                {% csrf_token %}
+                
+                <div class="input-group">
+                    <label>Seleccionar Usuario:</label>
+                    <select name="user_id" required>
+                        {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.username }} ({{ usuario.rol }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nuevo Email:</label>
+                    <input type="email" name="email" placeholder="Dejar vacío para no cambiar">
+                </div>
+
+                <div class="input-group">
+                    <label>Nueva Contraseña:</label>
+                    <input type="password" name="password" placeholder="Dejar vacío para no cambiar">
+                </div>
+
+                <div class="input-group">
+                    <label>Nuevo Rol:</label>
+                    <select name="rol">
+                        {% for rol_value, rol_name in roles %}
+                            <option value="{{ rol_value }}">{{ rol_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nueva Dirección:</label>
+                    <select name="direccion">
+                        {% for direccion_value, direccion_name in direcciones %}
+                            <option value="{{ direccion_value }}" {% if usuario.direccion == direccion_value %}selected{% endif %}>
+                                {{ direccion_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+
+                <button type="submit" class="btn-submit">Actualizar Usuario</button>
+            </form>
+        </div>
+
+
+        <script>
+            // Recargar la página después de actualizar un usuario
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.querySelector("#editar form");
+                form.addEventListener("submit", function () {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);  // Recarga la página medio segundo después de enviar el formulario
+                });
+            });
+        </script>
+        
+
+        <!-- LISTA DE USUARIOS REGISTRADOS -->
+        <h2 class="responded-title">Usuarios Registrados</h2>
+        <div class="table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id }}</td>
+                        <td>{{ usuario.username }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.rol }}</td>
+                        <td>{{ usuario.get_direccion_display }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'eliminar_usuario' usuario.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-eliminar">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+
+        <div class="btn-container">
+            <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,151 @@
+/* Fondo */
+.filter-background {
+    background: linear-gradient(135deg, #800020, #4a667d);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Contenedor principal */
+.filter-container {
+    background: rgba(255, 255, 255, 0.97);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 95%;
+    max-width: 900px;
+    text-align: center;
+}
+
+/* Título */
+.filter-title {
+    font-family: 'Georgia', serif;
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Formulario de filtros */
+form label {
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    color: #2c3e50;
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+form select {
+    width: 100%;
+    max-width: 300px;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    background: #f8f9fa;
+    margin-bottom: 15px;
+}
+
+.btn-filtrar {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-filtrar:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Tabla de resultados */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #2c3e50;
+    margin: 0 auto;
+}
+
+thead {
+    background: #2c3e50;
+    color: white;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #2c3e50;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+}
+
+tr:nth-child(even) {
+    background: #f1f1f1;
+}
+
+tr:hover {
+    background: #dfe6e9;
+}
+
+/* Botón Volver */
+.btn-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.btn-volver {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-volver:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.btn-responder {
+    display: inline-block;
+    background-color: #007BFF;
+    color: white;
+    padding: 5px 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-responder:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn-responder:active {
+    background-color: #004494;
+    transform: scale(0.98);
+}

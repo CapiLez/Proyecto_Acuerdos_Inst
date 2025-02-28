@@ -1,0 +1,54 @@
+.responded-background {
+    background-color: #f4f4f9;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.responded-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px 30px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.responded-title {
+    color: #444;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.btn-eliminar {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-right: 10px;
+}
+
+.btn-eliminar:hover {
+    background-color: darkred;
+}
+
+.btn-cancelar {
+    background-color: gray;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.btn-cancelar:hover {
+    background-color: #555;
+}
