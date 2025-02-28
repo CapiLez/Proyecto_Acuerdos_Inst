@@ -49,13 +49,17 @@ function validarFormulario() {
 <style>
     body {
         font-family: Arial, sans-serif;
-        background: #800020;
+        background-image: url('/static/images/FondoDif.png');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         margin: 0;
-        flex-direction: column;
+        overflow: hidden;
     }
     
     .login-wrapper {
@@ -64,16 +68,18 @@ function validarFormulario() {
         align-items: center;
         width: 100%;
         height: 100vh;
+        position: relative;
     }
 
     .login-container {
-        background: white;
+        background: rgba(255, 255, 255, 0.9);
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         width: 350px;
         text-align: center;
         position: relative;
+        z-index: 1;
     }
 
     .logo-container {

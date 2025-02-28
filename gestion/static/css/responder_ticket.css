@@ -1,0 +1,172 @@
+/* Fondo oscuro */
+.responder-background {
+    background: linear-gradient(135deg, #800020, #4a667d);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Contenedor principal */
+.responder-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 95%;
+    max-width: 700px;
+    text-align: center;
+}
+
+/* Título elegante */
+.responder-title {
+    font-family: 'Georgia', serif;
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Detalles del ticket */
+.ticket-details {
+    margin-bottom: 20px;
+}
+.ticket-details h3 {
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+.ticket-details p {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 5px 0;
+}
+
+/* Formulario para responder */
+.responder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.responder-form label {
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.responder-form select,
+.responder-form textarea {
+    width: 60%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    background: #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+.responder-form select:focus,
+.responder-form textarea:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+.responder-form textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+/* Botón Actualizar */
+.btn-update {
+    background: #007BFF;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-update:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Respuestas Anteriores */
+.answers-title {
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #2c3e50;
+}
+
+thead {
+    background: #2c3e50;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 2px solid #2c3e50;
+    font-size: 15px;
+    font-family: 'Arial', sans-serif;
+}
+
+tr:nth-child(even) {
+    background: #f1f1f1;
+}
+
+tr:hover {
+    background: #dfe6e9;
+}
+
+/* Botón Volver */
+.btn-container {
+    text-align: center;
+}
+
+.btn-volver {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    font-family: 'Arial', sans-serif;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-volver:hover {
+    background: #218838;
+    transform: scale(1.05);
+}

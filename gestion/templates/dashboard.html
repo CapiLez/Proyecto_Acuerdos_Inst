@@ -9,44 +9,45 @@
             <div class="card text-white bg-primary mb-3">
                 <div class="card-header">Total de Tickets</div>
                 <div class="card-body">
-                    <h3 class="card-title text-center">{{ total_tickets }}</h3>
+                    <h3 class="card-title text-center" id="total_tickets">{{ total_tickets }}</h3>
                 </div>
             </div>
             <div class="card text-white bg-warning mb-3">
                 <div class="card-header">Tickets Pendientes</div>
                 <div class="card-body">
-                    <h3 class="card-title text-center">{{ tickets_pendientes }}</h3>
+                    <h3 class="card-title text-center" id="tickets_pendientes">{{ tickets_pendientes }}</h3>
                 </div>
             </div>
             <div class="card text-white bg-info mb-3">
                 <div class="card-header">Tickets En Proceso</div>
                 <div class="card-body">
-                    <h3 class="card-title text-center">{{ tickets_en_proceso }}</h3>
+                    <h3 class="card-title text-center" id="tickets_en_proceso">{{ tickets_en_proceso }}</h3>
                 </div>
             </div>
             <div class="card text-white bg-success mb-3">
                 <div class="card-header">Tickets Completados</div>
                 <div class="card-body">
-                    <h3 class="card-title text-center">{{ tickets_completados }}</h3>
+                    <h3 class="card-title text-center" id="tickets_completados">{{ tickets_completados }}</h3>
                 </div>
             </div>
         </div>
-        <!-- Columna de Gráfica -->
+        <!-- Contenedor de la gráfica -->
         <div class="col-md-6">
             <h4 class="text-center" id="chartTitle">Tickets por Estado - Global</h4>
             <div class="chart-container">
                 <canvas id="ticketsChart"></canvas>
             </div>
-            <div class="text-center mt-3">
-                <button class="btn btn-secondary" onclick="loadGlobalData()">Mostrar Global</button>
+            <!-- Contenedor del botón bien posicionado -->
+            <div class="btn-container">
+                <button class="btn btn-custom" onclick="loadGlobalData()">Mostrar Global</button>
             </div>
         </div>
-    </div>
+
     
     <!-- Tabla de Tickets por Dirección -->
     <div class="row justify-content-center mt-5">
         <div class="col-md-8">
-            <h4 class="text-center">Tickets por Dirección</h4>
+            <h4 class="text-center"></h4>
             <table class="styled-table">
                 <thead>
                     <tr>
@@ -72,96 +73,265 @@
 </div>
 
 <style>
-    .styled-table {
+    /* Contenedor del botón para centrarlo correctamente */
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px; /* Espaciado para evitar superposición */
+        margin-left: 900px;
+    }
+
+    /* Estilo para el botón "Mostrar Global" */
+    .btn-custom {
+        background-color: #343a40;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-custom:hover {
+        background-color: #23272b;
+    }
+
+    /* Contenedor de la tabla sin scroll horizontal */
+    .table-container {
         width: 100%;
+        overflow: hidden; /* Elimina cualquier desplazamiento horizontal */
+    }
+
+    /* Tabla sin desbordamiento */
+    .styled-table {
+        width: 93%;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin-top: 10px;
+        font-size: 0.80em;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        table-layout: auto; /* Permite que las columnas se ajusten */
     }
+
+    /* Ajuste de las celdas */
     .styled-table th, .styled-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
+        padding: 4px 6px; /* Reduce el padding */
         text-align: center;
+        word-wrap: break-word; /* Permite que el texto se divida en varias líneas */
     }
+
+    /* Encabezado de la tabla */
     .styled-table th {
         background-color: #2c3e50;
         color: white;
+        text-transform: uppercase;
+        font-weight: bold;
     }
+
+    /* Alternar colores de filas */
     .styled-table tr:nth-child(even) {
-        background-color: #f2f2f2;
+        background-color: #f8f9fa;
     }
+
     .styled-table tr:hover {
-        background-color: #ddd;
+        background-color: #e9ecef;
     }
-    /* Contenedor responsivo para la gráfica */
+
+    /* Links en la tabla */
+    .styled-table a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .styled-table a:hover {
+        text-decoration: underline;
+    }
+
+    /* Estilos para pantallas pequeñas */
+    @media (max-width: 768px) {
+        .styled-table {
+            font-size: 0.75em; /* Reduce aún más el tamaño en móviles */
+        }
+    }
+
+    /* Contenedor de tarjetas */
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; /* Centrar tarjetas */
+        gap: 10px; /* Espacio entre tarjetas */
+    }
+
+    /* Tarjetas más compactas */
+    .card {
+        width: 180px; /* Reduce el ancho */
+        height: 90px; /* Reduce la altura */
+        padding: 8px; /* Reduce padding */
+        margin-bottom: 10px; /* Espacio más reducido entre tarjetas */
+        text-align: center;
+        border-radius: 6px; /* Bordes más suaves */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Títulos de las tarjetas */
+    .card-header {
+        font-size: 0.85em; /* Reduce el tamaño del título */
+        font-weight: bold;
+        padding: 4px;
+    }
+
+    /* Texto de número total */
+    .card-title {
+        font-size: 1.5em; /* Reduce el tamaño del número */
+        font-weight: bold;
+        margin: 5px 0;
+    }
+
+    /* Colores específicos */
+    .bg-primary { background-color: #007bff; }
+    .bg-warning { background-color: #ffc107; color: black; }
+    .bg-info { background-color: #17a2b8; }
+    .bg-success { background-color: #28a745; }
+
+    /* Responsivo para pantallas pequeñas */
+    @media (max-width: 768px) {
+        .card {
+            width: 140px; /* Reduce más el ancho en móviles */
+            height: 80px; /* Reduce más la altura en móviles */
+        }
+        .card-title {
+            font-size: 1.2em; /* Reduce aún más el tamaño del número */
+        }
+    }
+
+    /* Estilo para el contenedor de la gráfica */
     .chart-container {
         position: relative;
-        width: 100%;
-        height: 50vh; /* Ajusta la altura según tus necesidades */
+        width: 60%; /* Ajusta el tamaño del gráfico */
+        height: 50vh; /* Ajusta la altura */
+        margin-left: 400px; /* Mueve el gráfico a la derecha */
+        margin-top: -500px; /* Mueve el gráfico hacia arriba */
+        margin-bottom: 20px; /* Espaciado inferior */
     }
 </style>
 
 <!-- Incluir Chart.js desde CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Convertir los valores globales a números
-    var globalData = {
-        pendiente: parseInt('{{ tickets_pendientes|default:"0" }}', 10),
-        en_proceso: parseInt('{{ tickets_en_proceso|default:"0" }}', 10),
-        completado: parseInt('{{ tickets_completados|default:"0" }}', 10)
-    };
-
-    var ctx = document.getElementById('ticketsChart').getContext('2d');
-    var ticketsChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Pendiente', 'En Proceso', 'Completado'],
-            datasets: [{
-                label: 'Tickets por Estado',
-                data: [globalData.pendiente, globalData.en_proceso, globalData.completado],
-                backgroundColor: [
-                    'rgba(255, 193, 7, 0.7)',
-                    'rgba(23, 162, 184, 0.7)',
-                    'rgba(40, 167, 69, 0.7)'
-                ],
-                borderColor: [
-                    'rgba(255, 193, 7, 1)',
-                    'rgba(23, 162, 184, 1)',
-                    'rgba(40, 167, 69, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
+    document.addEventListener("DOMContentLoaded", function() {
+        var globalData = {
+            pendiente: parseInt('{{ tickets_pendientes|default:"0" }}', 10),
+            en_proceso: parseInt('{{ tickets_en_proceso|default:"0" }}', 10),
+            completado: parseInt('{{ tickets_completados|default:"0" }}', 10)
+        };
+    
+        var ctx = document.getElementById('ticketsChart').getContext('2d');
+        var ticketsChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Pendiente', 'En Proceso', 'Completado'],
+                datasets: [{
+                    label: 'Tickets por Estado',
+                    data: [globalData.pendiente, globalData.en_proceso, globalData.completado],
+                    backgroundColor: [
+                        'rgba(255, 193, 7, 0.7)',
+                        'rgba(23, 162, 184, 0.7)',
+                        'rgba(40, 167, 69, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 193, 7, 1)',
+                        'rgba(23, 162, 184, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        labels: {
+                            color: '#333',
+                            font: {
+                                size: 14,
+                                family: 'Arial, sans-serif',
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+    
+        // Variable para recordar la vista actual (global, direccion, o empty)
+        var currentView = "global";
+    
+        function updateChart(data) {
+            ticketsChart.data.datasets[0].data = [data.pendiente, data.en_proceso, data.completado];
+            ticketsChart.update();
         }
+    
+        function clearChart() {
+            ticketsChart.data.datasets[0].data = [0, 0, 0];
+            ticketsChart.update();
+        }
+    
+        function autoUpdateData() {
+            if (currentView === "global") {
+                fetch("/gestion/obtener_tickets_global/")
+                    .then(response => response.json())
+                    .then(data => {
+                        updateChart(data);
+                        document.getElementById("total_tickets").innerText = data.pendiente + data.en_proceso + data.completado;
+                        document.getElementById("tickets_pendientes").innerText = data.pendiente;
+                        document.getElementById("tickets_en_proceso").innerText = data.en_proceso;
+                        document.getElementById("tickets_completados").innerText = data.completado;
+                    })
+                    .catch(error => {
+                        console.error("Error al obtener los datos actualizados:", error);
+                    });
+            }
+        }
+    
+        function loadDireccionData(direccionKey, direccionNombre) {
+            document.getElementById("chartTitle").innerText = "Tickets por Estado - " + direccionNombre;
+            fetch("/gestion/obtener_tickets_por_direccion/?direccion=" + encodeURIComponent(direccionKey))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.pendiente === 0 && data.en_proceso === 0 && data.completado === 0) {
+                        clearChart();
+                        currentView = "empty";  // Marcar como vacía para evitar sobrescribir
+                    } else {
+                        updateChart(data);
+                        currentView = "direccion";  // Se mantiene en vista de dirección
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener datos por dirección:", error);
+                });
+        }
+    
+        window.loadGlobalData = function() {
+            document.getElementById("chartTitle").innerText = "Tickets por Estado - Global";
+            updateChart(globalData);
+            currentView = "global"; // Se establece la vista global
+        };
+    
+        window.loadDireccionData = loadDireccionData;
+    
+        // Actualiza la gráfica cada 10 segundos SOLO si está en vista global
+        setInterval(autoUpdateData, 10000);
     });
-
-    window.updateChart = function(data) {
-        ticketsChart.data.datasets[0].data = [data.pendiente, data.en_proceso, data.completado];
-        ticketsChart.update();
-    };
-
-    window.loadGlobalData = function() {
-        document.getElementById("chartTitle").innerText = "Tickets por Estado - Global";
-        updateChart(globalData);
-    };
-
-    // Ahora la función recibe también el nombre amigable de la dirección
-    window.loadDireccionData = function(direccionKey, direccionNombre) {
-        document.getElementById("chartTitle").innerText = "Tickets por Estado - " + direccionNombre;
-        fetch("{% url 'obtener_tickets_por_direccion' %}?direccion=" + encodeURIComponent(direccionKey))
-            .then(response => response.json())
-            .then(data => {
-                // Se espera que 'data' tenga la estructura: { pendiente: X, en_proceso: Y, completado: Z }
-                updateChart(data);
-            })
-            .catch(error => {
-                console.error("Error al obtener datos por dirección:", error);
-                alert("No se pudieron cargar los datos para la dirección: " + direccionNombre);
-            });
-    };
-});
-</script>
+</script>         
 {% endblock %}

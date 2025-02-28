@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Respuesta, Usuario, Ticket
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+from datetime import datetime
 
 
 def login_view(request):
@@ -56,7 +58,6 @@ def dashboard_view(request):
     
     return render(request, "dashboard.html", context)
 
-
 @login_required
 def logout_view(request):
     logout(request)
@@ -89,7 +90,6 @@ def crear_ticket_view(request):
 
     return render(request, "pages/create_ticket.html", {"usuarios": usuarios})
 
-
 @login_required
 def generar_reportes_view(request):
     reportes = {}
@@ -110,7 +110,6 @@ def generar_reportes_view(request):
 def historial_view(request):
     tickets = Ticket.objects.all().order_by("-fecha_creacion")
     return render(request, "pages/historial.html", {"tickets": tickets})
-
 
 @login_required
 def responder_ticket_view(request, ticket_id):
@@ -133,10 +132,6 @@ def responder_ticket_view(request, ticket_id):
             messages.success(request, "Estado del ticket actualizado.")
 
     return render(request, "pages/responder_ticket.html", {"ticket": ticket, "respuestas": respuestas})
-
-
-from django.utils import timezone
-from datetime import datetime
 
 @login_required
 def filtrar_actividades_view(request):
@@ -164,7 +159,6 @@ def filtrar_actividades_view(request):
 
     usuarios = Usuario.objects.all()
     return render(request, "pages/filtrar_actividades.html", {"tickets": tickets, "usuarios": usuarios})
-
 
 @login_required
 def tickets_respondidos_view(request):
@@ -201,7 +195,6 @@ def gestionar_usuario_view(request):
     }
     
     return render(request, "pages/gestionar_usuario.html", context)
-
 
 @login_required
 def editar_usuario_view(request):
@@ -292,7 +285,6 @@ def editar_ticket_view(request, ticket_id):
     usuarios = Usuario.objects.all()
     return render(request, "pages/editar_ticket.html", {"ticket": ticket, "usuarios": usuarios})
 
-
 @login_required
 def eliminar_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -307,11 +299,31 @@ def eliminar_ticket_view(request, ticket_id):
 @login_required
 def obtener_tickets_por_direccion_view(request):
     direccion = request.GET.get('direccion')
+
+    if not direccion:
+        return JsonResponse({"error": "Debe proporcionar una dirección válida"}, status=400)
+
     data = {
         "pendiente": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado__iexact="pendiente").count(),
-        "en_proceso": Ticket.objects.filter(usuario_asignado__direccion=direccion).filter(
-                           Q(estado__iexact="en_proceso") | Q(estado__iexact="en proceso")
-                       ).count(),
+        "en_proceso": Ticket.objects.filter(
+            usuario_asignado__direccion=direccion
+        ).filter(
+            Q(estado__iexact="en_proceso") | Q(estado__iexact="en proceso")
+        ).count(),
         "completado": Ticket.objects.filter(usuario_asignado__direccion=direccion, estado__iexact="completado").count(),
+    }
+
+    return JsonResponse(data)
+
+@login_required
+def obtener_tickets_global(request):
+    tickets_pendientes = Ticket.objects.filter(estado="pendiente").count()
+    tickets_en_proceso = Ticket.objects.filter(estado="en_proceso").count()
+    tickets_completados = Ticket.objects.filter(estado="completado").count()
+
+    data = {
+        "pendiente": tickets_pendientes,
+        "en_proceso": tickets_en_proceso,
+        "completado": tickets_completados,
     }
     return JsonResponse(data)

@@ -4,87 +4,209 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Acuerdos Institucionales</title>
+    {% load static %}
+    <!-- Nueva fuente: Merriweather (más formal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="{% static 'css/create_ticket.css' %}">
+    <link rel="stylesheet" href="{% static 'css/editar_ticket.css' %}">
+    <link rel="stylesheet" href="{% static 'css/eliminar_ticket.css' %}">
+    <link rel="stylesheet" href="{% static 'css/filtrar_actividades.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gen_reporte.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gestionar_tickets.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gestionar_usuario.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responder_ticket.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tickets_respondidos.css' %}">
+
     <style>
+        /* Nueva fuente Merriweather */
         body {
-            display: flex;
-            font-family: 'Merriweather', serif;
-            background-color: #f4f4f4;
+            font-family: 'Merriweather', serif !important;
+            background-color: #FAF3E0;
             color: #333;
             margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
         }
+
+        body.modo-oscuro {
+            background-color: #1E1E1E;
+            color: #f4f4f4;
+        }
+
+        /* Sidebar */
         .sidebar {
-            width: 270px;
-            background: #1c1c1c;
+            width: 250px;
+            background: #1B2A30; /* Color actualizado */
             height: 100vh;
             padding-top: 20px;
             position: fixed;
             left: 0;
             top: 0;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
+            transition: width 0.3s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .sidebar.contraido {
+            width: 60px;
+        }
+        .sidebar.contraido a span,
+        .sidebar.contraido h2 {
+            display: none;
         }
         .sidebar h2 {
             text-align: center;
-            font-size: 24px;
-            font-weight: bold;
             color: #ffffff;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #444;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin: 0 0 20px 0; /* Más margen inferior */
+            font-weight: 700; /* Más negrita */
+            font-size: 20px; /* Tamaño de fuente más grande */
         }
+
+        /* Links del sidebar */
         .sidebar a {
-            display: block;
-            color: #c0c0c0;
-            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            color: #FAF3E0;
+            padding: 15px 20px; /* Más padding horizontal */
             text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
             transition: background 0.3s, color 0.3s;
+            white-space: nowrap;
+            font-size: 16px;
+            font-weight: 400; /* Peso normal para una apariencia más formal */
+            letter-spacing: 0.5px;
+            margin: 5px 0; /* Espaciado entre enlaces */
+            border-radius: 5px; /* Bordes redondeados */
         }
         .sidebar a:hover {
-            background: #444;
-            color: #ffffff;
+            background: #2C3E50; 
         }
         .sidebar a.active {
-            background: #444;
+            background: #1A252F; /* Color más fuerte */
             color: #ffffff;
-            font-weight: bold;
         }
+
+        /* Iconos del sidebar */
+        .sidebar a i {
+            margin-right: 15px; /* Más espacio entre icono y texto */
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar.contraido a i {
+            margin-right: 0;
+        }
+
+        /* Botón de toggle */
+        .toggle-sidebar {
+            cursor: pointer;
+            color: #FAF3E0;
+            font-size: 24px;
+            padding: 10px;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            transition: color 0.3s;
+            z-index: 1; /* Asegura que esté por encima de los iconos */
+        }
+        .toggle-sidebar:hover {
+            color: #ffffff;
+        }
+
+        /* Ajuste para evitar solapamiento */
+        .sidebar.contraido a:first-of-type {
+            margin-top: 50px; /* Espacio adicional para el primer enlace */
+        }
+
+        /* Contenedor principal */
         .content-container {
-            margin-left: 290px;
+            margin-left: 250px;
             padding: 30px;
-            width: 100%;
-            background: #ffffff;
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s, width 0.3s;
+        }
+        .sidebar.contraido ~ .content-container {
+            margin-left: 60px;
+            width: calc(100% - 60px);
+        }
+
+        /* Modo oscuro */
+        .modo-oscuro .sidebar {
+            background-color: #1e1e1e;
+        }
+        .modo-oscuro .sidebar a {
+            color: #bbb;
+        }
+        .modo-oscuro .sidebar a:hover {
+            background-color: #333;
+        }
+        .modo-oscuro .modo-toggle {
+            color: #bbb;
         }
     </style>
 </head>
-<body>
-    <div class="sidebar">
+<body class="modo-claro">
+
+    <div class="sidebar contraible">
+        <div class="toggle-sidebar" onclick="toggleSidebar()">☰</div>
         <h2>Menú</h2>
 
-        <!-- Accesible para todos los usuarios -->
-        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-        <a href="{% url 'crear_ticket' %}" class="{% if request.resolver_match.url_name == 'crear_ticket' %}active{% endif %}">Crear Ticket</a>
-        <a href="{% url 'filtrar_actividades' %}" class="{% if request.resolver_match.url_name == 'filtrar_actividades' %}active{% endif %}">Filtrar Actividades</a>
+        <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="{% url 'crear_ticket' %}" class="{% if request.resolver_match.url_name == 'crear_ticket' %}active{% endif %}">
+            <i class="fas fa-plus-circle"></i>
+            <span>Crear Ticket</span>
+        </a>
+        <a href="{% url 'filtrar_actividades' %}" class="{% if request.resolver_match.url_name == 'filtrar_actividades' %}active{% endif %}">
+            <i class="fas fa-filter"></i>
+            <span>Filtrar Actividades</span>
+        </a>
 
         {% if request.user.rol in "administrador,coordinador,director" %}
-        <a href="{% url 'generar_reportes' %}" class="{% if request.resolver_match.url_name == 'generar_reportes' %}active{% endif %}">Generar Reportes</a>
+        <a href="{% url 'generar_reportes' %}" class="{% if request.resolver_match.url_name == 'generar_reportes' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Generar Reportes</span>
+        </a>
         {% endif %}
 
         {% if request.user.rol in "administrador,coordinador" %}
-        <a href="{% url 'tickets_respondidos' %}" class="{% if request.resolver_match.url_name == 'tickets_respondidos' %}active{% endif %}">Tickets Respondidos</a>
+        <a href="{% url 'tickets_respondidos' %}" class="{% if request.resolver_match.url_name == 'tickets_respondidos' %}active{% endif %}">
+            <i class="fas fa-check-circle"></i>
+            <span>Tickets Respondidos</span>
+        </a>
         {% endif %}
 
         {% if request.user.rol == "administrador" %}
-        <a href="{% url 'gestionar_usuario' %}" class="{% if request.resolver_match.url_name == 'gestionar_usuario' %}active{% endif %}">Gestionar Usuarios</a>
-        <a href="{% url 'gestionar_tickets' %}" class="{% if request.resolver_match.url_name == 'gestionar_tickets' %}active{% endif %}">Gestionar Tickets</a>
+        <a href="{% url 'gestionar_usuario' %}" class="{% if request.resolver_match.url_name == 'gestionar_usuario' %}active{% endif %}">
+            <i class="fas fa-users-cog"></i>
+            <span>Gestionar Usuarios</span>
+        </a>
+        <a href="{% url 'gestionar_tickets' %}" class="{% if request.resolver_match.url_name == 'gestionar_tickets' %}active{% endif %}">
+            <i class="fas fa-ticket-alt"></i>
+            <span>Gestionar Tickets</span>
+        </a>
         {% endif %}
 
-        <a href="{% url 'logout' %}">Cerrar Sesión</a>
+        <a href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar Sesión</span>
+        </a>
     </div>
 
     <div class="content-container">
         {% block content %}{% endblock %}
     </div>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector(".sidebar").classList.toggle("contraido");
+        }
+    </script>
 </body>
 </html>
