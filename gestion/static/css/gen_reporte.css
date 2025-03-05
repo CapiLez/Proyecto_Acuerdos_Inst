@@ -1,29 +1,9 @@
-/* Fondo azul oscuro */
-.report-background {
-    background: linear-gradient(135deg, #800020, #4a667d);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-/* Contenedor */
-.report-container {
-    background: rgba(250, 250, 250, 0.95);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    width: 98%;
-    max-width: 1000px;
-    text-align: center;
-}
 
 /* Título */
 .report-title {
     font-family: 'Georgia', serif;
     font-size: 28px;
-    color: #2c3e50;
+    color: black;
     margin-bottom: 20px;
     font-weight: bold;
 }
@@ -73,7 +53,7 @@ table {
     background: white;
     border-radius: 10px;
     overflow: hidden;
-    border: 2px solid #2c3e50;
+    border: 2px solid #A04040;;
 }
 
 thead {
@@ -117,13 +97,9 @@ tr:hover {
     color: white;
 }
 
-.resuelto {
-    background: #28a745;
-    color: white;
-}
 
-.completad {
-    background: #6c757d;
+.completado {
+    background: #28a745;
     color: white;
 }
 

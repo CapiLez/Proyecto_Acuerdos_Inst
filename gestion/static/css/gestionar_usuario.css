@@ -1,35 +1,24 @@
-/* Fondo degradado */
-.responded-background {
-    background: linear-gradient(135deg, #800020, #4a667d);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-/* Contenedor principal */
-.responded-container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    width: 95%;
-    max-width: 900px;
-    text-align: center;
-}
-
 /* Mensajes */
 .message-container {
     margin-bottom: 15px;
+    text-align: center;
 }
 .message {
     padding: 10px;
     border-radius: 5px;
     font-weight: bold;
+    color: white;
+    text-align: center;
+    width: 80%;
+    margin: auto;
+}
+.message.success {
     background-color: #d4edda;
-    border: 1px solid #c3e6cb;
     color: #155724;
+    border-left: 6px solid #28a745;
+}
+.message.error {
+    background-color: #dc3545;
 }
 
 /* Pestañas */
@@ -59,9 +48,15 @@
 
 /* Formulario */
 .user-form {
-    width: 100%;
-    max-width: 600px;
+    width: calc(100% - 50px); /* Ajuste dinámico */
+    max-width: 700px; /* Un poco más compacto */
     margin: auto;
+    background-color: #800020; /* Rojo vino corporativo */
+    padding: 30px; /* Menos padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #ffffff; /* Texto en blanco para contrastar */
+    transition: width 0.3s ease;
 }
 .input-group {
     text-align: left;
@@ -102,6 +97,8 @@ input, select {
 .table-container {
     overflow-x: auto;
     margin-top: 20px;
+    width: calc(100% - 50px); /* Ajuste dinámico */
+    transition: width 0.3s ease;
 }
 
 /* Tabla estilizada */
@@ -170,25 +167,8 @@ input, select {
     transform: scale(1.05);
 }
 
-.message-container {
-text-align: center;
-margin-bottom: 15px;
-}
-
-.message {
-    padding: 10px;
-    border-radius: 5px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    width: 80%;
-    margin: auto;
-}
-
-.message.success {
-    background-color: #28a745;
-}
-
-.message.error {
-    background-color: #dc3545;
+/* Ajuste dinámico cuando el sidebar está contraído */
+.sidebar-collapsed .table-container,
+.sidebar-collapsed .user-form {
+    width: 100%;
 }

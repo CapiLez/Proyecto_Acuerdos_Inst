@@ -1,29 +1,23 @@
- /* Fondo con degradado */
- .edit-ticket-background {
-    background: linear-gradient(135deg, #800020, #4a667d);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
+
 
 /* Contenedor principal */
 .edit-ticket-container {
-    background: rgba(255, 255, 255, 0.97);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 600px;
-    text-align: center;
+    background-color: #800020; /* Rojo vino corporativo */
+    margin-left: 150px;
+    padding: 30px; /* Menos padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 700px; /* Un poco más compacto */
+    width: 100%;
+    color: #ffffff; /* Texto en blanco para contrastar */
 }
 
 /* Título */
 .edit-ticket-title {
     font-size: 24px;
     font-weight: bold;
-    color: #2c3e50;
+    color: white;
+    text-align: center;
     margin-bottom: 20px;
 }
 
@@ -74,13 +68,14 @@ textarea {
 .btn-cancelar {
     display: inline-block;
     background-color: red;
-    color: #28a745;
+    color: white;
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 6px;
     font-size: 16px;
     font-weight: bold;
     margin-top: 10px;
+    margin-left: 300px;
 }
 
 .btn-cancelar:hover {

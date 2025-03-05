@@ -1,127 +1,147 @@
-/* Fondo de la página */
+/* Importar la fuente Roboto de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 .ticket-background {
-    background: #800020;
-    min-height: 100vh;
+    padding: 20px 0; /* Menos padding */
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 20px;
+    align-items: center;
+    min-height: 100vh;
+    background-color: transparent; /* Fondo transparente */
+    font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
-/* Contenedor del formulario */
 .ticket-container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    width: 95%;
-    max-width: 600px;
-    text-align: center;
+    background-color: #800020; /* Rojo vino corporativo */
+    margin-left: -25px;
+    padding: 30px; /* Menos padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 700px; /* Un poco más compacto */
+    width: 100%;
+    color: #ffffff; /* Texto en blanco para contrastar */
 }
 
-/* Título elegante */
 .ticket-title {
-    font-family: 'Georgia', serif;
-    font-size: 28px;
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-weight: bold;
+    font-size: 24px; /* Título más compacto */
+    font-weight: 700; /* Negrita */
+    margin-bottom: 20px; /* Menos espacio */
+    text-align: center;
+    color: #ffffff;
+    text-transform: uppercase; /* Título en mayúsculas */
+    letter-spacing: 1px; /* Espaciado entre letras */
 }
 
-/* Mensajes */
 .message-container {
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* Menos espacio */
 }
 
 .message {
     padding: 8px;
     border-radius: 5px;
-    font-weight: bold;
-    color: #155724;
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 14px; /* Texto más pequeño */
 }
 
-/* Formulario */
+.message.success {
+    background-color: #e6f4ea;
+    color: #2e7d32;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
 .styled-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    width: 100%;
+    gap: 15px; /* Menos espacio entre elementos */
 }
 
 .input-group {
-    text-align: left;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Menos espacio entre label y input */
 }
 
-/* Letras más elegantes */
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    font-size: 14px;
-    color: #2c3e50;
-    font-family: 'Arial', sans-serif;
+.input-group label {
+    font-size: 14px; /* Texto más pequeño */
+    color: #ffffff; /* Texto en blanco */
+    font-weight: 500; /* Semi-negrita */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
 }
 
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #bbb;
-    border-radius: 6px;
-    font-size: 14px;
-    background: #f8f9fa;
-    font-family: 'Arial', sans-serif;
-    transition: all 0.2s ease;
+.input-group input,
+.input-group textarea,
+.input-group select {
+    padding: 10px; /* Menos padding */
+    border: 1px solid #A04040; /* Borde rojo vino más claro */
+    border-radius: 5px;
+    font-size: 14px; /* Texto más pequeño */
+    color: #333333;
+    background-color: #ffffff; /* Fondo blanco para los inputs */
+    transition: border-color 0.3s ease;
+    width: 100%; /* Ocupa todo el ancho disponible */
+    font-family: 'Roboto', sans-serif; /* Fuente Roboto */
 }
 
-input:focus, textarea:focus, select:focus {
-    border-color: #007BFF;
+.input-group select {
+    height: 45px; /* Select boxes un poco más compactos */
+}
+
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus {
+    border-color: #A04040; /* Rojo vino más claro para el foco */
     outline: none;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
 }
 
-/* Botón principal */
+.input-group textarea {
+    resize: vertical;
+    min-height: 120px; /* Textarea más compacto */
+}
+
 .btn-submit {
-    background: #007BFF;
-    color: white;
-    padding: 12px;
+    background-color: #A04040; /* Rojo vino más claro */
+    color: #ffffff;
+    padding: 12px 20px; /* Menos padding */
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
+    font-size: 16px; /* Texto más pequeño */
+    font-weight: 500; /* Semi-negrita */
     cursor: pointer;
-    width: 100%;
-    font-size: 15px;
-    font-weight: bold;
-    font-family: 'Arial', sans-serif;
-    transition: background 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Ocupa todo el ancho */
+    font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
 }
 
 .btn-submit:hover {
-    background: #0056b3;
-    transform: scale(1.03);
+    background-color: #800020; /* Rojo vino más oscuro al pasar el mouse */
 }
 
-/* Botón volver */
 .btn-container {
+    margin-top: 20px; /* Menos espacio */
     text-align: center;
-    margin-top: 15px;
 }
 
 .btn-dashboard {
-    display: inline-block;
-    padding: 12px 20px;
-    background: #28a745;
-    color: white;
+    background-color: #A04040; /* Rojo vino más claro */
+    color: #ffffff;
+    padding: 8px 16px; /* Más compacto */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px; /* Texto más pequeño */
     text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 15px;
-    font-family: 'Arial', sans-serif;
-    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: auto; /* Ancho automático */
+    font-family: 'Roboto', sans-serif; /* Fuente Roboto */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
 }
 
 .btn-dashboard:hover {
-    background: #218838;
-    transform: scale(1.03);
+    background-color: #800020; /* Rojo vino más oscuro al pasar el mouse */
 }

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Bienvenido, {{ request.user.username }}</h2>
+    <img src="{% static 'images/logo3.png' %}" alt="Logo" class="logo-img">
     <div class="row">
         <!-- Tarjetas de Resumen -->
         <div class="col-md-6">
@@ -31,6 +33,7 @@
                 </div>
             </div>
         </div>
+        
         <!-- Contenedor de la gráfica -->
         <div class="col-md-6">
             <h4 class="text-center" id="chartTitle">Tickets por Estado - Global</h4>
@@ -73,12 +76,27 @@
 </div>
 
 <style>
+.logo-img {
+    width: 300px; /* Ajusta el tamaño del logo según sea necesario */
+    height: auto;
+    position: absolute;
+    right: 20px; /* Mantiene el logo fijo en la esquina derecha */
+    top: 10px; /* Ajusta la posición superior */
+    transition: all 0.3s ease; /* Suaviza cualquier cambio de tamaño */
+}
+
+/* Asegurar que el logo no se mueva con el sidebar */
+.sidebar-collapsed + .container .logo-img {
+    right: 20px; /* Mantiene la misma posición aún con el sidebar colapsado */
+}
+
+
     /* Contenedor del botón para centrarlo correctamente */
     .btn-container {
         display: flex;
         justify-content: center;
         margin-top: 15px; /* Espaciado para evitar superposición */
-        margin-left: 900px;
+        margin-left: 850px;
     }
 
     /* Estilo para el botón "Mostrar Global" */
@@ -102,6 +120,7 @@
     .table-container {
         width: 100%;
         overflow: hidden; /* Elimina cualquier desplazamiento horizontal */
+        margin-left: 400px;
     }
 
     /* Tabla sin desbordamiento */
@@ -114,18 +133,20 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
         table-layout: auto; /* Permite que las columnas se ajusten */
+        margin-left: 0px;
     }
 
     /* Ajuste de las celdas */
     .styled-table th, .styled-table td {
         padding: 4px 6px; /* Reduce el padding */
-        text-align: center;
+        text-align: left;
         word-wrap: break-word; /* Permite que el texto se divida en varias líneas */
+        
     }
 
     /* Encabezado de la tabla */
     .styled-table th {
-        background-color: #2c3e50;
+        background-color: darkred; ;
         color: white;
         text-transform: uppercase;
         font-weight: bold;
@@ -142,7 +163,7 @@
 
     /* Links en la tabla */
     .styled-table a {
-        color: #007bff;
+        color: black;
         text-decoration: none;
         font-weight: bold;
     }
@@ -214,7 +235,7 @@
         width: 60%; /* Ajusta el tamaño del gráfico */
         height: 50vh; /* Ajusta la altura */
         margin-left: 400px; /* Mueve el gráfico a la derecha */
-        margin-top: -500px; /* Mueve el gráfico hacia arriba */
+        margin-top: -450px; /* Mueve el gráfico hacia arriba */
         margin-bottom: 20px; /* Espaciado inferior */
     }
 </style>
