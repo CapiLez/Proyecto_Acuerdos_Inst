@@ -7,8 +7,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Respuesta, Usuario, Ticket
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
-from django.utils import timezone
-from datetime import datetime
 
 
 def login_view(request):
@@ -58,6 +56,7 @@ def dashboard_view(request):
     
     return render(request, "dashboard.html", context)
 
+
 @login_required
 def logout_view(request):
     logout(request)
@@ -90,6 +89,7 @@ def crear_ticket_view(request):
 
     return render(request, "pages/create_ticket.html", {"usuarios": usuarios})
 
+
 @login_required
 def generar_reportes_view(request):
     reportes = {}
@@ -110,6 +110,7 @@ def generar_reportes_view(request):
 def historial_view(request):
     tickets = Ticket.objects.all().order_by("-fecha_creacion")
     return render(request, "pages/historial.html", {"tickets": tickets})
+
 
 @login_required
 def responder_ticket_view(request, ticket_id):
@@ -133,23 +134,30 @@ def responder_ticket_view(request, ticket_id):
 
     return render(request, "pages/responder_ticket.html", {"ticket": ticket, "respuestas": respuestas})
 
+
+from django.utils import timezone
+from datetime import datetime
+
 @login_required
 def filtrar_actividades_view(request):
     usuario_actual = request.user
 
-    # Filtrar tickets según el usuario o el rol de administrador
+    # Si el usuario es administrador, obtiene todos los tickets
     if usuario_actual.rol == "administrador":
         tickets = Ticket.objects.all()
     else:
         tickets = Ticket.objects.filter(usuario_asignado=usuario_actual)
 
-    usuario_asignado = request.GET.get("usuario_asignado", "")
-    direccion = request.GET.get("direccion", "")
-    estado = request.GET.get("estado", "")
-    prioridad = request.GET.get("prioridad", "")
+    usuario_asignado = request.GET.get("usuario_asignado", "").strip()
+    direccion = request.GET.get("direccion", "").strip()
+    estado = request.GET.get("estado", "").strip()
+    prioridad = request.GET.get("prioridad", "").strip()
+    fecha_inicio = request.GET.get("fecha_inicio", "").strip()
+    fecha_fin = request.GET.get("fecha_fin", "").strip()
 
+    # Aplicar filtros dinámicos
     if usuario_asignado:
-        tickets = tickets.filter(usuario_asignado_id=usuario_asignado)
+        tickets = tickets.filter(usuario_asignado__username__icontains=usuario_asignado)
     if direccion:
         tickets = tickets.filter(usuario_asignado__direccion=direccion)
     if estado:
@@ -157,8 +165,22 @@ def filtrar_actividades_view(request):
     if prioridad:
         tickets = tickets.filter(prioridad=prioridad)
 
+    # Filtros de fecha
+    if fecha_inicio:
+        tickets = tickets.filter(fecha_creacion__date__gte=fecha_inicio)
+    if fecha_fin:
+        tickets = tickets.filter(fecha_creacion__date__lte=fecha_fin)
+
+    print(f"Tickets encontrados: {tickets.count()}")  # ✅ Agrega esto para verificar en la terminal
+
     usuarios = Usuario.objects.all()
-    return render(request, "pages/filtrar_actividades.html", {"tickets": tickets, "usuarios": usuarios})
+    direcciones = Usuario.DIRECCIONES
+
+    return render(request, "pages/filtrar_actividades.html", {
+        "tickets": tickets,
+        "usuarios": usuarios,
+        "direcciones": direcciones
+    })
 
 @login_required
 def tickets_respondidos_view(request):
@@ -195,6 +217,7 @@ def gestionar_usuario_view(request):
     }
     
     return render(request, "pages/gestionar_usuario.html", context)
+
 
 @login_required
 def editar_usuario_view(request):
@@ -285,6 +308,7 @@ def editar_ticket_view(request, ticket_id):
     usuarios = Usuario.objects.all()
     return render(request, "pages/editar_ticket.html", {"ticket": ticket, "usuarios": usuarios})
 
+
 @login_required
 def eliminar_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
@@ -333,14 +357,14 @@ def autocompletar_direcciones(request):
     if 'term' in request.GET:
         term = request.GET.get('term', '').lower()
         direcciones = [nombre for _, nombre in Usuario.DIRECCIONES if term in nombre.lower()]
-        return JsonResponse(direcciones, safe=False)  # Devuelve la lista en formato JSON
+        return JsonResponse(direcciones, safe=False)
     return JsonResponse([], safe=False)
 
 @login_required
 def autocompletar_usuarios(request):
     if 'term' in request.GET:
         term = request.GET.get('term', '').lower()
-        usuarios = Usuario.objects.filter(username__icontains=term)[:10]  # Limitar a 10 resultados
+        usuarios = Usuario.objects.filter(username__icontains=term)[:10]
         usuarios_nombres = list(usuarios.values_list('username', flat=True))
         return JsonResponse(usuarios_nombres, safe=False)
     return JsonResponse([], safe=False)

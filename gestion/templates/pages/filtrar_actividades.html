@@ -8,26 +8,36 @@
         <!-- Formulario de filtros -->
         <form method="GET" action="">
             <label>Usuario Asignado:</label>
-            <select name="usuario_asignado">
-                <option value="">Todos</option>
-                {% for usuario in usuarios %}
-                    <option value="{{ usuario.id }}" {% if request.GET.usuario_asignado == usuario.id|stringformat:"s" %}selected{% endif %}>
-                        {{ usuario.username }} - {{ usuario.get_direccion_display }}
-                    </option>
-                {% endfor %}
-            </select>
+            <input type="text" id="usuario-search" name="usuario_asignado" placeholder="Escribe un usuario..." value="{{ request.GET.usuario_asignado }}">
         
             <label>Dirección:</label>
-            <select name="direccion">
-                <option value="">Todas</option>
-                {% for direccion_value, direccion_name in usuario.DIRECCIONES %}
-                    <option value="{{ direccion_value }}" {% if request.GET.direccion == direccion_value %}selected{% endif %}>{{ direccion_name }}</option>
-                {% endfor %}
+            <input type="text" id="direccion-search" name="direccion" placeholder="Escribe una dirección..." value="{{ request.GET.direccion }}">
+        
+            <label>Estado:</label>
+            <select name="estado">
+                <option value="">Todos</option>
+                <option value="pendiente" {% if request.GET.estado == "pendiente" %}selected{% endif %}>Pendiente</option>
+                <option value="en_proceso" {% if request.GET.estado == "en_proceso" %}selected{% endif %}>En Proceso</option>
+                <option value="completado" {% if request.GET.estado == "completado" %}selected{% endif %}>Completado</option>
             </select>
         
+            <label>Prioridad:</label>
+            <select name="prioridad">
+                <option value="">Todas</option>
+                <option value="baja" {% if request.GET.prioridad == "baja" %}selected{% endif %}>Baja</option>
+                <option value="media" {% if request.GET.prioridad == "media" %}selected{% endif %}>Media</option>
+                <option value="alta" {% if request.GET.prioridad == "alta" %}selected{% endif %}>Alta</option>
+            </select>
+        
+            <label>Fecha Inicio:</label>
+            <input type="date" name="fecha_inicio" value="{% if request.GET.fecha_inicio %}{{ request.GET.fecha_inicio|date:'Y-m-d' }}{% endif %}">
+
+            <label>Fecha Fin:</label>
+            <input type="date" name="fecha_fin" value="{% if request.GET.fecha_fin %}{{ request.GET.fecha_fin|date:'Y-m-d' }}{% endif %}">
+
             <button type="submit" class="btn-filtrar">Filtrar</button>
         </form>
-        
+
         <!-- Tabla de resultados -->
         {% if tickets %}
             <div class="table-container">
@@ -75,6 +85,36 @@
         <div class="btn-container">
             <a href="{% url 'dashboard' %}" class="btn-volver">Volver al Dashboard</a>
         </div>
-    </div>
-</div>
+        
+        <!-- Incluir jQuery y jQuery UI para Autocompletado -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        
+        <script>
+            $(document).ready(function() {
+                $("#usuario-search").autocomplete({
+                    source: "/gestion/autocompletar_usuarios/",
+                    minLength: 2
+                });
+        
+                $("#direccion-search").autocomplete({
+                    source: "/gestion/autocompletar_direcciones/",
+                    minLength: 2
+                });
+        
+                // Limpiar el formulario DESPUÉS de filtrar correctamente
+                $("form").submit(function() {
+                    setTimeout(function() {
+                        let params = new URLSearchParams(window.location.search);
+        
+                        if (params.toString() !== "") {
+                            $("form")[0].reset(); // Borra los datos del formulario
+                            $("#usuario-search").val(""); // Borra manualmente el usuario asignado
+                            $("#direccion-search").val(""); // Borra manualmente la dirección
+                        }
+                    }, 500);
+                });
+            });
+        </script>                                  
 {% endblock %}
