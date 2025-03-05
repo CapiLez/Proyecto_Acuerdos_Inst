@@ -5,41 +5,43 @@
 <div class="container mt-4">
     <h2 class="text-center">Bienvenido, {{ request.user.username }}</h2>
     <img src="{% static 'images/logo3.png' %}" alt="Logo" class="logo-img">
-    <div class="row">
-        <!-- Tarjetas de Resumen -->
-        <div class="card-container">
-            <div class="card bg-primary">
-                <div class="card-header">Total de Tickets</div>
-                <div class="card-body">
-                    <h3 class="card-title">4</h3>
-                </div>
-            </div>
-            <div class="card bg-warning">
-                <div class="card-header">Tickets Pendientes</div>
-                <div class="card-body">
-                    <h3 class="card-title">1</h3>
-                </div>
-            </div>
-            <div class="card bg-info">
-                <div class="card-header">Tickets En Proceso</div>
-                <div class="card-body">
-                    <h3 class="card-title">1</h3>
-                </div>
-            </div>
-            <div class="card bg-success">
-                <div class="card-header">Tickets Completados</div>
-                <div class="card-body">
-                    <h3 class="card-title">2</h3>
-                </div>
+    
+    <!-- Botón para ver los tickets globales -->
+    <div class="btn-container">
+        <button class="btn-global" onclick="loadGlobalData()">Ver Tickets Globales</button>
+    </div>
+
+    <!-- Tarjetas de Resumen -->
+    <div class="card-container">
+        <div class="card bg-primary">
+            <div class="card-header">Total de Tickets</div>
+            <div class="card-body">
+                <h3 class="card-title" id="total_tickets">{{ total_tickets }}</h3>
             </div>
         </div>
-        
+        <div class="card bg-warning">
+            <div class="card-header">Tickets Pendientes</div>
+            <div class="card-body">
+                <h3 class="card-title" id="tickets_pendientes">{{ tickets_pendientes }}</h3>
+            </div>
+        </div>
+        <div class="card bg-info">
+            <div class="card-header">Tickets En Proceso</div>
+            <div class="card-body">
+                <h3 class="card-title" id="tickets_en_proceso">{{ tickets_en_proceso }}</h3>
+            </div>
+        </div>
+        <div class="card bg-success">
+            <div class="card-header">Tickets Completados</div>
+            <div class="card-body">
+                <h3 class="card-title" id="tickets_completados">{{ tickets_completados }}</h3>
+            </div>
+        </div>
+    </div>
 
-    
     <!-- Tabla de Tickets por Dirección -->
     <div class="row justify-content-center mt-5">
         <div class="col-md-8">
-            <h4 class="text-center"></h4>
             <table class="styled-table">
                 <thead>
                     <tr>
@@ -51,7 +53,7 @@
                     {% for direccion in direcciones_tickets %}
                     <tr>
                         <td>
-                            <a href="#" onclick="loadDireccionData('{{ direccion.key }}', '{{ direccion.nombre }}'); return false;">
+                            <a href="#" data-key="{{ direccion.key }}" onclick="loadDireccionData('{{ direccion.key }}', '{{ direccion.nombre }}'); return false;">
                                 {{ direccion.nombre }}
                             </a>
                         </td>
@@ -64,43 +66,100 @@
     </div>
 </div>
 
+<!-- Estilos CSS -->
 <style>
 .logo-img {
-    width: 300px; /* Ajusta el tamaño del logo según sea necesario */
+    width: 300px;
     height: auto;
     position: absolute;
-    right: 20px; /* Mantiene el logo fijo en la esquina derecha */
-    top: 10px; /* Ajusta la posición superior */
-    transition: all 0.3s ease; /* Suaviza cualquier cambio de tamaño */
+    right: 20px;
+    top: 10px;
+    transition: all 0.3s ease;
 }
 
-/* Asegurar que el logo no se mueva con el sidebar */
-.sidebar-collapsed + .container .logo-img {
-    right: 20px; /* Mantiene la misma posición aún con el sidebar colapsado */
+.card-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 30px;
 }
 
+.card {
+    width: 180px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-    /* Contenedor del botón para centrarlo correctamente */
-    .btn-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 15px; /* Espaciado para evitar superposición */
-        margin-left: 850px;
+.card-header {
+    font-size: 0.85em;
+    font-weight: bold;
+    padding: 4px;
+}
+
+.card-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.bg-primary { background-color: #007bff; }
+.bg-warning { background-color: #ffc107; color: black; }
+.bg-info { background-color: #17a2b8; }
+.bg-success { background-color: #28a745; }
+
+/* Botón para ver los tickets globales */
+.btn-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.btn-global {
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-global:hover {
+    background-color: #23272b;
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 140px;
+        height: 80px;
     }
+    .card-title {
+        font-size: 1.2em;
+    }
+}
 
-    
-    /* Contenedor de la tabla sin scroll horizontal */
-    .table-container {
+/* Contenedor de la tabla sin scroll horizontal */
+.table-container {
         width: 100%;
         overflow: hidden; /* Elimina cualquier desplazamiento horizontal */
         margin-left: 400px;
+        
     }
 
     /* Tabla sin desbordamiento */
     .styled-table {
         width: 93%;
         border-collapse: collapse;
-        margin-top: 10px;
+        margin-top: 12px;
         font-size: 0.80em;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -117,102 +176,72 @@
         
     }
 
-    /* Encabezado de la tabla */
-    .styled-table th {
-        background-color: darkred; ;
-        color: white;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
-
-    /* Alternar colores de filas */
-    .styled-table tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    .styled-table tr:hover {
-        background-color: #e9ecef;
-    }
-
-    /* Links en la tabla */
-    .styled-table a {
-        color: black;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .styled-table a:hover {
-        text-decoration: underline;
-    }
-
-    /* Estilos para pantallas pequeñas */
-    @media (max-width: 768px) {
-        .styled-table {
-            font-size: 0.75em; /* Reduce aún más el tamaño en móviles */
-        }
-    }
-
-    .card-container {
-    display: flex;
-    flex-direction: row; /* Acomoda las tarjetas en una fila */
-    flex-wrap: nowrap; /* Evita que se vayan a la siguiente línea */
-    justify-content: center; /* Centra las tarjetas */
-    gap: 30px; /* Espacio entre tarjetas */
-    margin-left: -50px;
+.styled-table th {
+    background-color: darkred;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
-.card {
-    width: 180px; /* Mantiene el ancho */
-    height: 90px; /* Mantiene la altura */
-    display: flex;
-    flex-direction: column; /* Mantiene el contenido apilado dentro de la tarjeta */
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 8px;
-    border-radius: 6px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+.styled-table tr:nth-child(even) {
+    background-color: #f8f9fa;
 }
 
-    /* Títulos de las tarjetas */
-    .card-header {
-        font-size: 0.85em; /* Reduce el tamaño del título */
-        font-weight: bold;
-        padding: 4px;
+.styled-table tr:hover {
+    background-color: #e9ecef;
+}
+
+.styled-table a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.styled-table a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .styled-table {
+        font-size: 0.75em;
     }
-
-    /* Texto de número total */
-    .card-title {
-        font-size: 1.5em; /* Reduce el tamaño del número */
-        font-weight: bold;
-        margin: 5px 0;
-    }
-
-    /* Colores específicos */
-    .bg-primary { background-color: #007bff; }
-    .bg-warning { background-color: #ffc107; color: black; }
-    .bg-info { background-color: #17a2b8; }
-    .bg-success { background-color: #28a745; }
-
-    /* Responsivo para pantallas pequeñas */
-    @media (max-width: 768px) {
-        .card {
-            width: 140px; /* Reduce más el ancho en móviles */
-            height: 80px; /* Reduce más la altura en móviles */
-        }
-        .card-title {
-            font-size: 1.2em; /* Reduce aún más el tamaño del número */
-        }
-    }
-
-    
-    /*.chart-container {
-        position: relative;
-        width: 60%; /* Ajusta el tamaño del gráfico 
-        height: 50vh; /* Ajusta la altura 
-        margin-left: 400px; /* Mueve el gráfico a la derecha 
-        margin-top: -450px; /* Mueve el gráfico hacia arriba 
-        margin-bottom: 20px; /* Espaciado inferior 
-    } */
+}
 </style>
+
+<!-- Script para actualizar tarjetas dinámicamente -->
+<script>
+    function loadDireccionData(direccionKey, direccionNombre) {
+        console.log("Seleccionaste la dirección:", direccionNombre);
+
+        fetch("/gestion/obtener_tickets_por_direccion/?direccion=" + encodeURIComponent(direccionKey))
+            .then(response => response.json())
+            .then(data => {
+                console.log("Datos recibidos:", data);
+
+                document.getElementById("total_tickets").innerText = data.pendiente + data.en_proceso + data.completado;
+                document.getElementById("tickets_pendientes").innerText = data.pendiente;
+                document.getElementById("tickets_en_proceso").innerText = data.en_proceso;
+                document.getElementById("tickets_completados").innerText = data.completado;
+            })
+            .catch(error => {
+                console.error("Error al obtener datos por dirección:", error);
+            });
+    }
+
+    function loadGlobalData() {
+        console.log("Mostrando Tickets Globales");
+
+        fetch("/gestion/obtener_tickets_global/")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("total_tickets").innerText = data.pendiente + data.en_proceso + data.completado;
+                document.getElementById("tickets_pendientes").innerText = data.pendiente;
+                document.getElementById("tickets_en_proceso").innerText = data.en_proceso;
+                document.getElementById("tickets_completados").innerText = data.completado;
+            })
+            .catch(error => {
+                console.error("Error al obtener datos globales:", error);
+            });
+    }
+</script>
 {% endblock %}

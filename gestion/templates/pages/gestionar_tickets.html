@@ -31,7 +31,16 @@
                         <tr>
                             <td>{{ ticket.id }}</td>
                             <td>{{ ticket.titulo }}</td>
-                            <td>{{ ticket.estado }}</td>
+                            
+                            <!-- Convertir "en_proceso" a "En Proceso" -->
+                            <td>
+                                {% if ticket.estado == "en_proceso" %}
+                                    En Proceso
+                                {% else %}
+                                    {{ ticket.estado|capfirst }}
+                                {% endif %}
+                            </td>
+
                             <td>
                                 {% if ticket.usuario_asignado %}
                                     {{ ticket.usuario_asignado.username }}
@@ -66,6 +75,4 @@
         </div>
     </div>
 </div>
-
-
 {% endblock %}

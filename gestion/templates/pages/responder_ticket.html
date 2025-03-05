@@ -14,7 +14,7 @@
         </div>
 
         <!-- Formulario para actualizar estado y agregar comentario -->
-        <form method="POST" class="responder-form">
+        <form method="POST" enctype="multipart/form-data" class="responder-form">
             {% csrf_token %}
 
             <label>Actualizar Estado:</label>
@@ -29,6 +29,9 @@
             <label>Agregar Comentario:</label>
             <textarea name="mensaje" required></textarea>
 
+            <label>Adjuntar Archivo:</label>
+            <input type="file" name="archivo">
+
             <button type="submit" class="btn-update">Actualizar</button>
         </form>
 
@@ -42,6 +45,7 @@
                             <th>Usuario</th>
                             <th>Mensaje</th>
                             <th>Fecha</th>
+                            <th>Archivo</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,6 +54,13 @@
                             <td>{{ respuesta.usuario.username }}</td>
                             <td>{{ respuesta.mensaje }}</td>
                             <td>{{ respuesta.fecha_respuesta }}</td>
+                            <td>
+                                {% if respuesta.archivo %}
+                                    <a href="{{ respuesta.archivo.url }}" target="_blank">Ver Archivo</a>
+                                {% else %}
+                                    Sin archivo
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

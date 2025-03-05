@@ -17,9 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from gestion import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Mantén esto si usas el admin de Django
     path('', views.login_view, name='login'),  # Redirige a la página de inicio de sesión
     path('gestion/', include('gestion.urls')),  # Incluye las rutas de la app gestion
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

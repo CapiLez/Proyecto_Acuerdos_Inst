@@ -37,11 +37,12 @@ class Usuario(AbstractUser):
 
 class Ticket(models.Model):
     ESTADOS = [
-        ('pendiente', 'Pendiente'),
-        ('en_progreso', 'En Proceso'),
-        ('completado', 'Completado'),
-        ('cancelado', 'Cancelado'),
+    ('pendiente', 'Pendiente'),
+    ('en_proceso', 'En Proceso'),
+    ('completado', 'Completado'),
+    ('cancelado', 'Cancelado'),
     ]
+
     PRIORIDADES = [
         ('baja', 'Baja'),
         ('media', 'Media'),
@@ -66,7 +67,9 @@ class Respuesta(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     mensaje = models.TextField()
     fecha_respuesta = models.DateTimeField(auto_now_add=True)
+    archivo = models.FileField(upload_to="respuestas_archivos/", null=True, blank=True)  # ✅ Permitir subida de archivos
 
     def __str__(self):
         return f"Respuesta de {self.usuario.username} en {self.ticket.titulo}"
+
 

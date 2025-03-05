@@ -29,7 +29,18 @@
                             <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
                             {% endif %}
                             <td>{{ ticket.titulo }}</td>
-                            <td><span class="status {{ ticket.estado|lower }}">{{ ticket.estado }}</span></td>
+                            
+                            <!-- Convertir estado en_proceso a En Proceso -->
+                            <td>
+                                <span class="status {{ ticket.estado|lower }}">
+                                    {% if ticket.estado == "en_proceso" %}
+                                        En Proceso
+                                    {% else %}
+                                        {{ ticket.estado|capfirst }}
+                                    {% endif %}
+                                </span>
+                            </td>
+
                             {% if forloop.first %}
                             <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
                             {% endif %}
@@ -48,6 +59,4 @@
         </div>
     </div>
 </div>
-    
-
 {% endblock %}

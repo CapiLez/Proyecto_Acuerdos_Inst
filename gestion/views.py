@@ -120,11 +120,17 @@ def responder_ticket_view(request, ticket_id):
     if request.method == "POST":
         mensaje = request.POST.get("mensaje")
         nuevo_estado = request.POST.get("estado")
-        
+        archivo = request.FILES.get("archivo")  # ✅ Obtener el archivo subido
+
         if not mensaje:
             messages.error(request, "Debe ingresar un mensaje para responder.")
         else:
-            Respuesta.objects.create(ticket=ticket, usuario=request.user, mensaje=mensaje)
+            respuesta = Respuesta.objects.create(
+                ticket=ticket,
+                usuario=request.user,
+                mensaje=mensaje,
+                archivo=archivo if archivo else None  # ✅ Guardar archivo solo si se sube
+            )
             messages.success(request, "Respuesta agregada correctamente.")
 
         if nuevo_estado and nuevo_estado in dict(Ticket.ESTADOS):
@@ -133,10 +139,6 @@ def responder_ticket_view(request, ticket_id):
             messages.success(request, "Estado del ticket actualizado.")
 
     return render(request, "pages/responder_ticket.html", {"ticket": ticket, "respuestas": respuestas})
-
-
-from django.utils import timezone
-from datetime import datetime
 
 @login_required
 def filtrar_actividades_view(request):

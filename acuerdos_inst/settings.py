@@ -141,3 +141,7 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "dashboard"
 
 AUTH_USER_MODEL = "gestion.Usuario"
+
+# Configuración de archivos media (para subir archivos)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
