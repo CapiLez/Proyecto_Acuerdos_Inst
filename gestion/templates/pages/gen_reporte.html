@@ -16,21 +16,22 @@
                     <thead>
                         <tr>
                             <th>Usuario</th>
+                            <th>Dirección</th>
                             <th>Títulos de Tickets</th>
                             <th>Estado</th>
                             <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for usuario, tickets in reportes.items %}
-                        {% for ticket in tickets %}
+                        {% for usuario, data in reportes.items %}
+                        {% for ticket in data.tickets %}
                         <tr>
                             {% if forloop.first %}
-                            <td rowspan="{{ tickets|length }}">{{ usuario }}</td>
+                            <td rowspan="{{ data.tickets|length }}">{{ usuario }}</td>
+                            <td rowspan="{{ data.tickets|length }}">{{ data.direccion }}</td>  <!-- Muestra el nombre de la dirección -->
                             {% endif %}
                             <td>{{ ticket.titulo }}</td>
                             
-                            <!-- Convertir estado en_proceso a En Proceso -->
                             <td>
                                 <span class="status {{ ticket.estado|lower }}">
                                     {% if ticket.estado == "en_proceso" %}
@@ -42,7 +43,7 @@
                             </td>
 
                             {% if forloop.first %}
-                            <td rowspan="{{ tickets|length }}">{{ tickets|length }}</td>
+                            <td rowspan="{{ data.tickets|length }}">{{ data.tickets|length }}</td>
                             {% endif %}
                         </tr>
                         {% endfor %}

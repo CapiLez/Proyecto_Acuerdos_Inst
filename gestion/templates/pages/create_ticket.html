@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
 <div class="ticket-background">
     <div class="ticket-container">
@@ -29,11 +28,6 @@
             </div>
             
             <div class="input-group">
-                <label>Adjuntar Archivo:</label>
-                <input type="file" name="archivo">
-            </div>
-            
-            <div class="input-group">
                 <label>Asignado a:</label>
                 <select name="asignado_a" required>
                     <option value="">Seleccione un usuario</option>
@@ -42,22 +36,13 @@
                     {% endfor %}
                 </select>
             </div>
-            
+        
             <div class="input-group">
                 <label>Prioridad:</label>
                 <select name="prioridad" required>
                     <option value="baja">Baja</option>
                     <option value="media">Media</option>
                     <option value="alta">Alta</option>
-                </select>
-            </div>
-            
-            <div class="input-group">
-                <label>Proceso:</label>
-                <select name="proceso" required>
-                    <option value="servicio">Servicio</option>
-                    <option value="mantenimiento">Mantenimiento</option>
-                    <option value="otro">Otro</option>
                 </select>
             </div>
             
@@ -71,7 +56,7 @@
             </div>
             
             <button type="submit" class="btn-submit">Crear Ticket</button>
-        </form>
+        </form>        
         
         <div class="btn-container">
             <a href="{% url 'dashboard' %}" class="btn-dashboard">Volver al Dashboard</a>

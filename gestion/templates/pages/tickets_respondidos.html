@@ -29,7 +29,7 @@
                                     No asignado
                                 {% endif %}
                             </td>
-                            <td>{{ ticket.estado }}</td>
+                            <td>{{ ticket.estado_nombre }}</td> <!-- Se muestra el nombre del estado -->
                             <td>
                                 {% if ticket.respuestas.all %}
                                     <div class="respuestas-container">

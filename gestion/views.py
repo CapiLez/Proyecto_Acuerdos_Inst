@@ -94,17 +94,28 @@ def crear_ticket_view(request):
 def generar_reportes_view(request):
     reportes = {}
     search_query = request.GET.get("search", "").strip()
-    
+
     if search_query:
         usuarios = Usuario.objects.filter(Q(username__icontains=search_query))
     else:
         usuarios = Usuario.objects.all()
     
     for usuario in usuarios:
-        tickets = Ticket.objects.filter(usuario_asignado=usuario)
-        reportes[usuario.username] = list(tickets)
-    
-    return render(request, "pages/gen_reporte.html", {"reportes": reportes, "search_query": search_query})
+        tickets = Ticket.objects.filter(usuario_asignado=usuario).select_related('usuario_asignado')
+
+        # Convertir clave de la Dirección en su nombre legible
+        direccion_nombre = dict(Usuario.DIRECCIONES).get(usuario.direccion, "No especificado")
+
+        reportes[usuario.username] = {
+            "direccion": direccion_nombre,  # Se almacena el nombre real de la dirección
+            "tickets": list(tickets)
+        }
+
+    return render(request, "pages/gen_reporte.html", {
+        "reportes": reportes, 
+        "search_query": search_query
+    })
+
 
 @login_required
 def historial_view(request):
@@ -120,7 +131,7 @@ def responder_ticket_view(request, ticket_id):
     if request.method == "POST":
         mensaje = request.POST.get("mensaje")
         nuevo_estado = request.POST.get("estado")
-        archivo = request.FILES.get("archivo")  # ✅ Obtener el archivo subido
+        archivo = request.FILES.get("archivo")  # Obtener el archivo subido
 
         if not mensaje:
             messages.error(request, "Debe ingresar un mensaje para responder.")
@@ -129,14 +140,16 @@ def responder_ticket_view(request, ticket_id):
                 ticket=ticket,
                 usuario=request.user,
                 mensaje=mensaje,
-                archivo=archivo if archivo else None  # ✅ Guardar archivo solo si se sube
+                archivo=archivo if archivo else None  # Guardar archivo solo si se sube
             )
-            messages.success(request, "Respuesta agregada correctamente.")
+            messages.success(request, "¡Respuesta agregada con éxito!")
 
         if nuevo_estado and nuevo_estado in dict(Ticket.ESTADOS):
             ticket.estado = nuevo_estado
             ticket.save()
             messages.success(request, "Estado del ticket actualizado.")
+
+        return redirect("responder_ticket", ticket_id=ticket.id)  # Redirigir a la misma página
 
     return render(request, "pages/responder_ticket.html", {"ticket": ticket, "respuestas": respuestas})
 
@@ -187,6 +200,13 @@ def filtrar_actividades_view(request):
 @login_required
 def tickets_respondidos_view(request):
     tickets_respondidos = Ticket.objects.filter(respuestas__isnull=False).distinct()
+
+    # Convertir los valores de los estados a nombres legibles
+    estados_legibles = dict(Ticket.ESTADOS)
+
+    for ticket in tickets_respondidos:
+        ticket.estado_nombre = estados_legibles.get(ticket.estado, ticket.estado)  # Si no está en el dict, deja el original
+
     context = {
         "tickets_respondidos": tickets_respondidos,
     }

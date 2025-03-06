@@ -5,6 +5,15 @@
     <div class="responder-container">
         <h2 class="responder-title">Responder Ticket</h2>
 
+        <!-- Mostrar mensajes de éxito o error -->
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+                <p class="message {{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- Detalles del Ticket -->
         <div class="ticket-details">
             <h3>{{ ticket.titulo }}</h3>
