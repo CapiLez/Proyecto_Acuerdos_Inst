@@ -6,7 +6,6 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .models import Respuesta, Usuario, Ticket
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
 
 
 def login_view(request):
@@ -72,7 +71,7 @@ def crear_ticket_view(request):
         asignado_a_id = request.POST.get("asignado_a")
         prioridad = request.POST.get("prioridad")
         estado = request.POST.get("estado")
-        archivo = request.FILES.get("archivo")  # ✅ Obtener el archivo subido
+        archivo = request.FILES.get("archivo")  # Obtener el archivo subido
 
         if not (titulo and descripcion and asignado_a_id and prioridad and estado):
             messages.error(request, "Todos los campos son obligatorios.")
