@@ -13,4 +13,65 @@
         </form>
     </div>
 </div>
+
+<style>
+    /* Contenedor principal */
+
+/* Título */
+.responded-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Pregunta centrada */
+.responded-container p {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Botones centrados */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Botón de eliminar */
+.btn-eliminar {
+    background-color: #d9534f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 18px;
+    margin-left: -250px;
+}
+
+.btn-eliminar:hover {
+    background-color: #c9302c;
+}
+
+/* Botón de cancelar */
+.btn-cancelar {
+    display: inline-block;
+    background-color: #5a6268;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: -40px;
+}
+
+.btn-cancelar:hover {
+    background-color: #343a40;
+}
+</style>
+
 {% endblock %}

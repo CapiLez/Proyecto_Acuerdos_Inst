@@ -332,20 +332,6 @@ def gestionar_tickets_view(request):
     return render(request, "pages/gestionar_tickets.html", {"tickets": tickets})
 
 @login_required
-def eliminar_usuario_view(request, user_id):
-    usuario = get_object_or_404(Usuario, id=user_id)
-
-    # Evitar que el usuario se elimine a sí mismo
-    if request.user == usuario:
-        messages.error(request, "No puedes eliminar tu propio usuario.")
-        return redirect("gestionar_usuario")
-
-    usuario.delete()
-    messages.success(request, f"El usuario {usuario.username} ha sido eliminado correctamente.")
-
-    return redirect("gestionar_usuario")
-
-@login_required
 def editar_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
