@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="responded-background">
+    <div class="responded-container">
+        <h2 class="responded-title">Eliminar Usuario</h2>
+        <p>¿Estás seguro de que deseas eliminar al usuario <strong>{{ usuario.first_name }} {{ usuario.last_name }}</strong> (<strong>{{ usuario.username }}</strong>)?</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn-eliminar">Sí, eliminar</button>
+            <a href="{% url 'gestionar_usuario' %}" class="btn-cancelar">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

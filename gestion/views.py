@@ -72,19 +72,23 @@ def crear_ticket_view(request):
         asignado_a_id = request.POST.get("asignado_a")
         prioridad = request.POST.get("prioridad")
         estado = request.POST.get("estado")
-        
+        archivo = request.FILES.get("archivo")  # ✅ Obtener el archivo subido
+
         if not (titulo and descripcion and asignado_a_id and prioridad and estado):
             messages.error(request, "Todos los campos son obligatorios.")
         else:
             usuario_asignado = get_object_or_404(Usuario, id=asignado_a_id)
+
             ticket = Ticket.objects.create(
                 titulo=titulo,
                 descripcion=descripcion,
                 usuario_asignado=usuario_asignado,
                 usuario_creador=request.user,
                 prioridad=prioridad,
-                estado=estado
+                estado=estado,
+                archivo=archivo if archivo else None  # Guardar archivo solo si se sube
             )
+
             messages.success(request, f"El ticket '{ticket.titulo}' se creó exitosamente.")
 
     return render(request, "pages/create_ticket.html", {"usuarios": usuarios})
@@ -186,7 +190,7 @@ def filtrar_actividades_view(request):
     if fecha_fin:
         tickets = tickets.filter(fecha_creacion__date__lte=fecha_fin)
 
-    print(f"Tickets encontrados: {tickets.count()}")  # ✅ Agrega esto para verificar en la terminal
+    print(f"Tickets encontrados: {tickets.count()}")
 
     usuarios = Usuario.objects.all()
     direcciones = Usuario.DIRECCIONES
@@ -214,31 +218,60 @@ def tickets_respondidos_view(request):
 
 @login_required
 def gestionar_usuario_view(request):
+    usuarios = Usuario.objects.all()
+    roles = Usuario.ROLES
+
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        first_name = request.POST.get("first_name", "").strip()
+        last_name = request.POST.get("last_name", "").strip()
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
         rol = request.POST.get("rol")
         direccion = request.POST.get("direccion")
 
-        if Usuario.objects.filter(username=username).exists():
-            messages.error(request, "El usuario ya existe.")
-        else:
-            usuario = Usuario.objects.create(username=username, email=email, rol=rol, direccion=direccion)
-            usuario.set_password(password)  # Encriptar la contraseña
-            usuario.save()
-            messages.success(request, "Usuario creado correctamente.")
+        # Validación de datos
+        if not first_name or not last_name or not username or not email or not password:
+            messages.error(request, "Todos los campos son obligatorios.")
+            return redirect("gestionar_usuario")
 
-    usuarios = Usuario.objects.all()
+        # Crear usuario
+        usuario = Usuario.objects.create(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            rol=rol,
+            direccion=direccion
+        )
+        usuario.set_password(password)  # Guardar la contraseña cifrada
+        usuario.save()
 
-    # Enviar los roles y direcciones al template
-    context = {
+        messages.success(request, f"Usuario {usuario.first_name} {usuario.last_name} creado correctamente.")
+        return redirect("gestionar_usuario")
+
+    return render(request, "pages/gestionar_usuario.html", {
         "usuarios": usuarios,
-        "roles": Usuario.ROLES,
+        "roles": roles,
         "direcciones": Usuario.DIRECCIONES
-    }
-    
-    return render(request, "pages/gestionar_usuario.html", context)
+    })
+
+@login_required
+def eliminar_usuario_view(request, user_id):
+    usuario = get_object_or_404(Usuario, id=user_id)
+
+    if request.method == "POST":
+        # Evitar que el usuario se elimine a sí mismo
+        if request.user == usuario:
+            messages.error(request, "No puedes eliminar tu propio usuario.")
+            return redirect("gestionar_usuario")
+
+        usuario.delete()
+        messages.success(request, f"El usuario {usuario.first_name} {usuario.last_name} ha sido eliminado correctamente.")
+        return redirect("gestionar_usuario")
+
+    # Si la solicitud es GET, mostrar la página de confirmación
+    return render(request, "pages/eliminar_usuario.html", {"usuario": usuario})
 
 
 @login_required

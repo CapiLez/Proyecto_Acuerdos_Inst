@@ -33,28 +33,29 @@ class Usuario(AbstractUser):
     direccion = models.CharField(max_length=50, choices=DIRECCIONES, default='coordinacion_general')
 
     def __str__(self):
-        return f"{self.username} ({self.get_rol_display()}) - {self.get_direccion_display()}"
+        nombre_completo = f"{self.first_name} {self.last_name}".strip()
+        return f"{nombre_completo if nombre_completo else self.username} ({self.get_rol_display()}) - {self.get_direccion_display()}"
 
 class Ticket(models.Model):
     ESTADOS = [
-    ('pendiente', 'Pendiente'),
-    ('en_proceso', 'En Proceso'),
-    ('completado', 'Completado'),
-    ('cancelado', 'Cancelado'),
+        ("pendiente", "Pendiente"),
+        ("en_proceso", "En Proceso"),
+        ("completado", "Completado"),
     ]
 
     PRIORIDADES = [
-        ('baja', 'Baja'),
-        ('media', 'Media'),
-        ('alta', 'Alta'),
+        ("baja", "Baja"),
+        ("media", "Media"),
+        ("alta", "Alta"),
     ]
-    
+
     titulo = models.CharField(max_length=255)
     descripcion = models.TextField()
-    estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
-    prioridad = models.CharField(max_length=10, choices=PRIORIDADES, default='media')
-    usuario_creador = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='tickets_creados')
-    usuario_asignado = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, related_name='tickets_asignados')
+    estado = models.CharField(max_length=20, choices=ESTADOS, default="pendiente")
+    prioridad = models.CharField(max_length=10, choices=PRIORIDADES, default="media")
+    usuario_creador = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="tickets_creados")
+    usuario_asignado = models.ForeignKey(Usuario, on_delete=models.SET_NULL, null=True, blank=True, related_name="tickets_asignados")
+    archivo = models.FileField(upload_to="tickets_archivos/", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 

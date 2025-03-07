@@ -14,6 +14,7 @@
                             <th>Título</th>
                             <th>Usuario Asignado</th>
                             <th>Estado</th>
+                            <th>Archivo (Ticket)</th>
                             <th>Respuestas</th>
                         </tr>
                     </thead>
@@ -30,6 +31,16 @@
                                 {% endif %}
                             </td>
                             <td>{{ ticket.estado_nombre }}</td> <!-- Se muestra el nombre del estado -->
+
+                            <!-- Nueva columna para mostrar el archivo adjunto del ticket -->
+                            <td>
+                                {% if ticket.archivo %}
+                                    <a href="{{ ticket.archivo.url }}" target="_blank" class="btn-descargar">Ver Archivo</a>
+                                {% else %}
+                                    Sin archivo
+                                {% endif %}
+                            </td>
+
                             <td>
                                 {% if ticket.respuestas.all %}
                                     <div class="respuestas-container">
@@ -40,6 +51,11 @@
                                                     - <span class="fecha">{{ respuesta.fecha_respuesta }}</span>
                                                 </p>
                                                 <p class="mensaje">"{{ respuesta.mensaje }}"</p>
+
+                                                <!-- Mostrar archivos adjuntos en respuestas -->
+                                                {% if respuesta.archivo %}
+                                                    <p><a href="{{ respuesta.archivo.url }}" target="_blank" class="btn-descargar">Ver Archivo Adjunto</a></p>
+                                                {% endif %}
                                             </div>
                                         {% endfor %}
                                     </div>

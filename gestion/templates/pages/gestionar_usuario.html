@@ -18,13 +18,12 @@
                 // Remover la clase "active" de todas las pestañas y botones
                 document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        
+
                 // Agregar la clase "active" a la pestaña seleccionada y al botón correspondiente
                 document.getElementById(tabId).classList.add('active');
-                event.currentTarget.classList.add('active');  // Agregar clase al botón que se hizo clic
+                event.currentTarget.classList.add('active');
             }
         </script>
-        
 
         <!-- Pestañas para cambiar entre "Crear Usuario" y "Editar Usuario" -->
         <div class="tab-container">
@@ -36,9 +35,19 @@
         <div id="crear" class="tab-content active">
             <form method="POST" action="{% url 'gestionar_usuario' %}" class="user-form">
                 {% csrf_token %}
-                
+
                 <div class="input-group">
-                    <label>Nombre de Usuario:</label>
+                    <label>Nombre:</label>
+                    <input type="text" name="first_name" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Apellidos:</label>
+                    <input type="text" name="last_name" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Usuario:</label>
                     <input type="text" name="username" required>
                 </div>
 
@@ -78,7 +87,7 @@
         <div id="editar" class="tab-content">
             <form method="POST" action="{% url 'editar_usuario' %}" class="user-form">
                 {% csrf_token %}
-                
+
                 <div class="input-group">
                     <label>Seleccionar Usuario:</label>
                     <select name="user_id" required>
@@ -117,12 +126,10 @@
                         {% endfor %}
                     </select>
                 </div>
-                
 
                 <button type="submit" class="btn-submit">Actualizar Usuario</button>
             </form>
         </div>
-
 
         <script>
             // Recargar la página después de actualizar un usuario
@@ -131,11 +138,10 @@
                 form.addEventListener("submit", function () {
                     setTimeout(() => {
                         location.reload();
-                    }, 500);  // Recarga la página medio segundo después de enviar el formulario
+                    }, 500);
                 });
             });
         </script>
-        
 
         <!-- LISTA DE USUARIOS REGISTRADOS -->
         <h2 class="responded-title">Usuarios Registrados</h2>
@@ -144,6 +150,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Nombre Completo</th>
                         <th>Usuario</th>
                         <th>Email</th>
                         <th>Rol</th>
@@ -155,21 +162,18 @@
                     {% for usuario in usuarios %}
                     <tr>
                         <td>{{ usuario.id }}</td>
+                        <td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
                         <td>{{ usuario.username }}</td>
                         <td>{{ usuario.email }}</td>
                         <td>{{ usuario.rol }}</td>
                         <td>{{ usuario.get_direccion_display }}</td>
                         <td>
-                            <form method="POST" action="{% url 'eliminar_usuario' usuario.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn-eliminar">Eliminar</button>
-                            </form>
+                            <a href="{% url 'eliminar_usuario' usuario.id %}" class="btn-eliminar">Eliminar</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
-            
+            </table>  
         </div>
 
         <div class="btn-container">
@@ -177,6 +181,5 @@
         </div>
     </div>
 </div>
-
 
 {% endblock %}

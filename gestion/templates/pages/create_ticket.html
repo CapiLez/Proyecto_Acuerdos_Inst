@@ -36,7 +36,7 @@
                     {% endfor %}
                 </select>
             </div>
-        
+
             <div class="input-group">
                 <label>Prioridad:</label>
                 <select name="prioridad" required>
@@ -53,6 +53,11 @@
                     <option value="en_proceso">En Proceso</option>
                     <option value="completado">Terminado</option>
                 </select>
+            </div>
+
+            <div class="input-group">
+                <label>Adjuntar Archivo:</label>
+                <input type="file" name="archivo">
             </div>
             
             <button type="submit" class="btn-submit">Crear Ticket</button>

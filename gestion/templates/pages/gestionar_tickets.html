@@ -23,6 +23,7 @@
                             <th>Estado</th>
                             <th>Usuario Asignado</th>
                             <th>Dirección</th>
+                            <th>Archivo</th>  <!-- Nueva columna -->
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -55,6 +56,16 @@
                                     Sin dirección
                                 {% endif %}
                             </td>
+
+                            <!-- Nueva columna para mostrar el archivo adjunto -->
+                            <td>
+                                {% if ticket.archivo %}
+                                    <a href="{{ ticket.archivo.url }}" target="_blank" class="btn-descargar">Ver Archivo</a>
+                                {% else %}
+                                    Sin archivo
+                                {% endif %}
+                            </td>
+
                             <td>
                                 <div class="actions-container">
                                     <a href="{% url 'editar_ticket' ticket.id %}" class="btn-editar">Editar</a>

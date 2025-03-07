@@ -19,6 +19,7 @@
                             <th>Dirección</th>
                             <th>Títulos de Tickets</th>
                             <th>Estado</th>
+                            <th>Archivo</th>  <!-- Nueva columna para archivos -->
                             <th>Total</th>
                         </tr>
                     </thead>
@@ -40,6 +41,15 @@
                                         {{ ticket.estado|capfirst }}
                                     {% endif %}
                                 </span>
+                            </td>
+
+                            <!-- Nueva columna: Ver archivo si existe -->
+                            <td>
+                                {% if ticket.archivo %}
+                                    <a href="{{ ticket.archivo.url }}" target="_blank" class="btn-descargar">Ver Archivo</a>
+                                {% else %}
+                                    Sin archivo
+                                {% endif %}
                             </td>
 
                             {% if forloop.first %}
