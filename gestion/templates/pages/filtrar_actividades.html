@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block content %}
 <div class="filter-background">
     <div class="filter-container">
@@ -139,5 +140,19 @@
                     }, 500);
                 });
             });
-        </script>                                          
+        </script> 
+        <style>
+            form select, form input[type="text"], form input[type="date"] {
+    width: 100%;
+    max-width: 250px;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    background: #f8f9fa;
+    margin-bottom: 15px;
+}
+
+        </style>                                         
 {% endblock %}
