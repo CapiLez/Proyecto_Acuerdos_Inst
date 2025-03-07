@@ -119,13 +119,6 @@ def generar_reportes_view(request):
         "search_query": search_query
     })
 
-
-@login_required
-def historial_view(request):
-    tickets = Ticket.objects.all().order_by("-fecha_creacion")
-    return render(request, "pages/historial.html", {"tickets": tickets})
-
-
 @login_required
 def responder_ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id, usuario_asignado=request.user)
@@ -339,7 +332,7 @@ def editar_ticket_view(request, ticket_id):
         ticket.estado = request.POST.get("estado", ticket.estado)
         ticket.usuario_asignado_id = request.POST.get("usuario_asignado", ticket.usuario_asignado_id)
         ticket.prioridad = request.POST.get("prioridad", ticket.prioridad)
-        ticket.descripcion = request.POST.get("descripcion", ticket.descripcion)  # ✅ Permitir edición del comentario
+        ticket.descripcion = request.POST.get("descripcion", ticket.descripcion)  # Permitir edición del comentario
         ticket.save()
 
         messages.success(request, f"El ticket '{ticket.titulo}' ha sido actualizado correctamente.")
